@@ -81,6 +81,38 @@ I was not the driver at the relevant time and I am not obliged to name them. I p
 
 Unless the operator can demonstrate strict compliance with POFA, keeper liability does not transfer and the charge is unenforceable against me.
 
+I request that this charge be cancelled. If rejected, please provide my POPLA/IAS verification code.` },
+      { id: 'machine', label: 'The payment machine / app was broken',
+        body: `I am writing to formally appeal Penalty/Parking Charge Notice {{pcnRef}}, issued on {{dateIssued}} at {{location}} in respect of vehicle {{vehicleReg}}.
+
+I dispute this charge because the payment machine or payment app was out of order, would not accept payment, or offered no working method to pay at the time. {{detail}}
+
+A motorist cannot fairly be penalised for failing to pay where the operator did not provide a working means of payment. I attempted to pay in good faith and was prevented from doing so by a fault outside my control.
+
+I request that this charge be cancelled. If rejected, please issue a rejection notice with details of the independent appeals service.` },
+      { id: 'deminimis', label: 'I only overstayed by a few minutes',
+        body: `I am writing to formally appeal Parking Charge Notice {{pcnRef}}, issued on {{dateIssued}} at {{location}} in respect of vehicle {{vehicleReg}}.
+
+The alleged overstay was only a few minutes. Time is needed to find a space, read the terms, pay and exit, and ANPR entry/exit times capture this manoeuvring time rather than actual parking time. {{detail}}
+
+A charge for such a minor, de minimis overstay is disproportionate and does not reflect any genuine loss.
+
+I request that this charge be cancelled. If rejected, please provide my POPLA/IAS appeal code.` },
+      { id: 'notmyvehicle', label: 'Not my vehicle / sold / cloned plate',
+        body: `I am writing regarding parking charge {{pcnRef}}, issued on {{dateIssued}} at {{location}} for vehicle {{vehicleReg}}.
+
+I was not responsible for this vehicle at the relevant time: it had been sold / was not in my possession / my registration appears to have been cloned or misread. {{detail}}
+
+I am therefore not liable, and I put the operator to strict proof of the driver/keeper's identity and of compliance with the Protection of Freedoms Act 2012 where keeper liability is alleged.
+
+I request that this charge be cancelled and removed from my record. If rejected, please provide the evidence relied upon and the independent appeal route.` },
+      { id: 'ntktime', label: 'Notice to Keeper arrived too late (private ticket)',
+        body: `I am writing as registered keeper regarding parking charge {{pcnRef}}, issued on {{dateIssued}} at {{location}} for vehicle {{vehicleReg}}.
+
+Where the operator relies on keeper liability under Schedule 4 of the Protection of Freedoms Act 2012, the Notice to Keeper must be served within the strict statutory time limits. The Notice here was not served within those limits. {{detail}}
+
+As the POFA timing requirements have not been met, keeper liability does not arise and the charge is unenforceable against me.
+
 I request that this charge be cancelled. If rejected, please provide my POPLA/IAS verification code.` }
     ]
   },
@@ -124,7 +156,23 @@ I dispute the proposed deductions: {{deductions}}.
 
 The landlord/agent has not produced a signed check-in inventory or dated evidence of the property's condition at the start of the tenancy. Without a clear baseline, deductions for alleged damage cannot be substantiated, and the burden of proof in ADR rests with the landlord. {{detail}}
 
-I request the disputed amount be returned. If not agreed, I will refer this to the {{scheme}} ADR scheme.` }
+I request the disputed amount be returned. If not agreed, I will refer this to the {{scheme}} ADR scheme.` },
+      { id: 'cleaning', label: 'Unreasonable cleaning charge',
+        body: `I am writing regarding the deposit of £{{depositAmount}} held for the tenancy at {{yourAddress}}, protected with {{scheme}}.
+
+I dispute the proposed deductions: {{deductions}}.
+
+A landlord cannot require a property to be returned in a better state than it was at check-in, and a tenant is only obliged to return it in a reasonably clean condition allowing for fair wear and tear. A blanket "professional cleaning" charge, with no evidence the property was professionally cleaned at the start, is not recoverable. {{detail}}
+
+I request the disputed amount be returned. Failing agreement, I will escalate to the {{scheme}} ADR service.` },
+      { id: 'unprotected', label: 'Deposit was not protected properly',
+        body: `I am writing regarding the deposit of £{{depositAmount}} held for the tenancy at {{yourAddress}}.
+
+I have reason to believe the deposit was not protected in a government-approved scheme within 30 days of payment, and/or the prescribed information was not provided to me as required by the Housing Act 2004. {{detail}}
+
+Where a landlord fails to comply, the tenant may be entitled to the return of the deposit and to a statutory penalty of between one and three times the deposit amount, awarded by the court. Please confirm the scheme, date of protection, and provide the prescribed information, failing which I will pursue this claim.
+
+I request the full return of my deposit. I reserve the right to bring a claim for the statutory penalty.` }
     ]
   },
 

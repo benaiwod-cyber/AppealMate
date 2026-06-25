@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AppealMate — Fight your parking ticket in 2 minutes</title>
+  <meta name="description" content="Appeal a parking ticket or PCN, challenge a deposit deduction, or claim train and flight delay compensation. Get a formal letter in 2 minutes from £1.99.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <!-- pdf-lib for client-side PDF generation -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+</head>
+<body>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="logo" href="#/">Appeal<b>Mate</b></a>
+      <a href="#/tool/parking" class="btn secondary" style="padding:8px 14px">Fight a ticket</a>
+    </div>
+  </header>
+
+  <main id="app"><!-- rendered by app.js --></main>
+
+  <!-- Phase 2: success-paste capture. Netlify detects this static form at deploy
+       time; app.js submits to it via fetch. Wins land in the Netlify dashboard
+       (Forms) for review, then get promoted into the template library. -->
+  <form name="wins" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="text" name="tool">
+    <input type="text" name="ground">
+    <input type="text" name="outcome">
+    <textarea name="notes"></textarea>
+    <input type="text" name="bot-field">
+  </form>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>© <span id="yr"></span> AppealMate · Not a law firm · No legal advice</div>
+      <div style="display:flex;gap:16px">
+        <a href="#/terms">Terms</a>
+        <a href="#/privacy">Privacy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

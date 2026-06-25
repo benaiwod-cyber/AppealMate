@@ -1,0 +1,9 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+# SPA-style: serve index.html, hash routing handles views.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="./styles.css">
   <!-- pdf-lib for client-side PDF generation -->
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <!-- Tesseract.js: client-side OCR for the photo-scan feature (free, no server) -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
   <header class="site-head">
@@ -28,6 +30,13 @@
   <form name="wins" data-netlify="true" netlify-honeypot="bot-field" hidden>
     <input type="text" name="tool">
     <input type="text" name="ground">
+    <input type="text" name="outcome">
+    <textarea name="notes"></textarea>
+    <input type="text" name="bot-field">
+  </form>
+  <!-- Outcome feedback from the follow-up email link (#/feedback). -->
+  <form name="outcomes" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="text" name="token">
     <input type="text" name="outcome">
     <textarea name="notes"></textarea>
     <input type="text" name="bot-field">

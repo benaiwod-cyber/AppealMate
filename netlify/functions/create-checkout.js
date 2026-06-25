@@ -25,7 +25,7 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); }
   catch { return { statusCode: 400, body: 'Bad JSON' }; }
 
-  const { tool, key, returnUrl, tier = 'first' } = body;
+  const { tool, key, returnUrl, tier = 'first', ground = '' } = body;
   if (!key || !returnUrl) return { statusCode: 400, body: 'Missing key/returnUrl' };
 
   const amount = PRICES[tier] || PRICES.first;
@@ -45,7 +45,7 @@ exports.handler = async (event) => {
       }],
       success_url: `${base}?paid=${encodeURIComponent(key)}`,
       cancel_url: returnUrl,
-      metadata: { tool: String(tool || ''), key: String(key) },
+      metadata: { tool: String(tool || ''), key: String(key), ground: String(ground || '') },
     });
     return { statusCode: 200, body: JSON.stringify({ url: session.url }) };
   } catch (e) {

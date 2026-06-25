@@ -31,6 +31,8 @@ function route() {
   if (view === 'tool' && TOOLS[arg]) return renderTool(arg);
   if (view === 'terms') return renderLegal('terms');
   if (view === 'privacy') return renderLegal('privacy');
+  if (view === 'admin') return renderAdmin();
+  if (view === 'feedback') return renderFeedback();
   return renderHome();
 }
 window.addEventListener('hashchange', route);
@@ -91,6 +93,13 @@ function renderTool(id) {
       <p class="sub fade-up d1" style="color:var(--muted)">${esc(t.blurb)}</p>
       <div class="panel fade-up d2">
         <div class="steps"><b>1. Your details</b> · 2. Pick your reason · 3. Get your letter</div>
+        ${id === 'parking' ? `
+        <div id="ocrZone" style="border:1px dashed #c9d6ea;border-radius:10px;padding:14px;margin-bottom:18px;background:#f7faff">
+          <strong style="font-size:.95rem">📷 Scan your ticket (beta)</strong>
+          <p style="margin:4px 0 8px;color:var(--muted);font-size:.88rem">Snap or upload a photo and we'll try to fill the form for you. Runs on your device — your photo never leaves your phone.</p>
+          <input type="file" id="ocrFile" accept="image/*" capture="environment" style="font-size:.9rem">
+          <div id="ocrStatus" style="font-size:.85rem;color:var(--brand);margin-top:6px"></div>
+        </div>` : ''}
         ${fields}
         <h3 style="font-size:1.05rem;margin-top:1.2rem">What's your reason for appealing?</h3>
         <div class="grounds">${grounds}</div>
@@ -108,6 +117,46 @@ function renderTool(id) {
     });
   });
   document.getElementById('genBtn').addEventListener('click', () => onGenerate(id));
+
+  const ocrFile = document.getElementById('ocrFile');
+  if (ocrFile) ocrFile.addEventListener('change', (e) => runOcr(e.target.files[0]));
+}
+
+// ---- Phase 2: photo-scan OCR (client-side Tesseract.js, free, no server) ----
+async function runOcr(file) {
+  if (!file || !window.Tesseract) return;
+  const status = document.getElementById('ocrStatus');
+  status.textContent = 'Reading your ticket… (first scan downloads the engine, ~10s)';
+  try {
+    const { data } = await Tesseract.recognize(file, 'eng', {
+      logger: m => { if (m.status === 'recognizing text') status.textContent = `Reading… ${Math.round(m.progress*100)}%`; }
+    });
+    const text = data.text || '';
+    const filled = autofillFromText(text);
+    status.textContent = filled.length ? `Filled: ${filled.join(', ')}. Please check everything is right.` : 'Could not read much — please fill the form manually. Full scan added to the notes field.';
+  } catch (err) {
+    status.textContent = 'Scan failed — please enter the details manually.';
+  }
+}
+
+function autofillFromText(text) {
+  const set = (id, val) => { const n = document.getElementById('f_' + id); if (n && val && !n.value) { n.value = val; return true; } return false; };
+  const filled = [];
+  const up = text.toUpperCase();
+  // UK number plate (current + older formats)
+  const reg = up.match(/\b([A-Z]{2}[0-9]{2}\s?[A-Z]{3}|[A-Z][0-9]{1,3}\s?[A-Z]{3}|[A-Z]{3}\s?[0-9]{1,3}[A-Z])\b/);
+  if (reg && set('vehicleReg', reg[1].replace(/\s/g, ' '))) filled.push('reg');
+  // PCN / reference: a longish alphanumeric token near the word reference/PCN/notice
+  const ref = text.match(/(?:PCN|reference|ref|notice)[^A-Z0-9]{0,12}([A-Z0-9]{6,14})/i);
+  if (ref && set('pcnRef', ref[1])) filled.push('reference');
+  // date dd/mm/yyyy or dd Month yyyy
+  const date = text.match(/\b(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})\b/) ||
+               text.match(/\b(\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4})\b/i);
+  if (date && set('dateIssued', date[1])) filled.push('date');
+  // keep the full scan so nothing is lost
+  const dn = document.getElementById('f_detail');
+  if (dn && !dn.value) dn.value = 'From scanned ticket:\n' + text.trim().slice(0, 600);
+  return filled;
 }
 
 function field(f, inner) {
@@ -198,7 +247,7 @@ async function startCheckout(id, letter) {
   try {
     const res = await fetch('/.netlify/functions/create-checkout', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tool: id, key, returnUrl: location.href })
+      body: JSON.stringify({ tool: id, key, ground: draft.ground || '', tier: firstTime() ? 'first' : 'return', returnUrl: location.href })
     });
     if (res.ok) {
       const { url } = await res.json();
@@ -293,6 +342,79 @@ function renderLegal(which) {
     <p>If you have any questions about your data, contact us through the site.</p>`;
   app.innerHTML = `<div class="wrap"><div class="back" onclick="location.hash=''">&larr; Home</div>
     <div class="panel fade-up">${which === 'terms' ? terms : privacy}</div></div>`;
+}
+
+// ---- Phase 2: monitoring dashboard (admin only) ----
+async function renderAdmin() {
+  const saved = sessionStorage.getItem('am_admin') || '';
+  app.innerHTML = `<div class="wrap"><div class="back" onclick="location.hash=''">&larr; Home</div>
+    <h2 class="fade-up">Business dashboard</h2>
+    <div class="panel fade-up d1">
+      <div class="field"><label>Admin password</label>
+        <input type="password" id="adminPass" value="${esc(saved)}" placeholder="enter admin password"></div>
+      <button class="btn" id="adminGo">Load stats</button>
+      <div id="adminOut" style="margin-top:18px"></div>
+    </div></div>`;
+  document.getElementById('adminGo').addEventListener('click', loadStats);
+  if (saved) loadStats();
+}
+
+async function loadStats() {
+  const pass = document.getElementById('adminPass').value.trim();
+  const out = document.getElementById('adminOut');
+  out.innerHTML = 'Loading…';
+  try {
+    const res = await fetch('/.netlify/functions/stats?pass=' + encodeURIComponent(pass));
+    if (res.status === 401) { out.innerHTML = '<p style="color:#c0392b">Wrong password.</p>'; return; }
+    const d = await res.json();
+    sessionStorage.setItem('am_admin', pass);
+    const rows = Object.entries(d.byTool || {}).map(([k,v]) => `<tr><td>${esc(k)}</td><td>${v.count}</td><td>£${(v.amount/100).toFixed(2)}</td></tr>`).join('');
+    out.innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
+        ${stat('Sales', d.count)}
+        ${stat('Revenue', '£' + (d.gross/100).toFixed(2))}
+        ${stat('Last 24h', d.last24)}
+        ${stat('Mode', d.mode)}
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:.92rem">
+        <thead><tr style="text-align:left;color:var(--muted)"><th>Tool</th><th>Sales</th><th>Revenue</th></tr></thead>
+        <tbody>${rows || '<tr><td colspan=3 style="color:var(--muted)">No sales yet</td></tr>'}</tbody>
+      </table>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:12px">Live from Stripe. Success-story submissions are in your Netlify dashboard → Forms.</p>`;
+  } catch (e) {
+    out.innerHTML = '<p style="color:#c0392b">Could not load. Is the stats function deployed?</p>';
+  }
+}
+const stat = (label, val) => `<div style="background:#f7faff;border:1px solid var(--line);border-radius:10px;padding:14px">
+  <div style="font-size:1.5rem;font-family:'Fraunces',serif;font-weight:600">${esc(String(val))}</div>
+  <div style="color:var(--muted);font-size:.82rem">${esc(label)}</div></div>`;
+
+// ---- Phase 2: outcome feedback page (linked from follow-up email) ----
+function renderFeedback() {
+  const token = new URLSearchParams(location.search).get('p') || '';
+  app.innerHTML = `<div class="wrap"><div class="back" onclick="location.hash=''">&larr; Home</div>
+    <h2 class="fade-up">How did your appeal go?</h2>
+    <div class="panel fade-up d1">
+      <p style="color:var(--muted)">Your answer helps us improve the letters for everyone. Thank you.</p>
+      <div class="field"><label>Result</label>
+        <select id="fbOutcome">
+          <option value="">Choose…</option>
+          <option>Won — charge cancelled / money back</option>
+          <option>Partially won</option>
+          <option>Still waiting</option>
+          <option>Rejected</option>
+        </select></div>
+      <div class="field"><label>Anything that helped? (optional)</label><textarea id="fbNotes"></textarea></div>
+      <button class="btn" id="fbBtn">Send</button>
+      <div id="fbDone" style="margin-top:12px"></div>
+    </div></div>`;
+  document.getElementById('fbBtn').addEventListener('click', async () => {
+    const outcome = document.getElementById('fbOutcome').value;
+    if (!outcome) return alert('Pick a result first.');
+    const data = new URLSearchParams({ 'form-name': 'outcomes', token, outcome, notes: document.getElementById('fbNotes').value.trim(), 'bot-field': '' });
+    try { await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: data.toString() }); } catch (e) {}
+    document.getElementById('fbDone').innerHTML = '<p style="color:var(--accent);font-weight:600">Thank you — that really helps. 🙏</p>';
+  });
 }
 
 // ---- boot ----

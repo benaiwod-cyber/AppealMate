@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AppealMate — Fight your parking ticket in 2 minutes</title>
   <meta name="description" content="Appeal a parking ticket or PCN, challenge a deposit deduction, or claim train and flight delay compensation. Get a formal letter in 2 minutes from £1.99.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#1f6feb">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -53,7 +57,9 @@
     </div>
   </footer>
 
-  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(()=>{})); }
+  </script>
   <script type="module" src="./app.js"></script>
 </body>
 </html>

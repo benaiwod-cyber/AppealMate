@@ -11,14 +11,15 @@
 
 ## Agents to build (Benjamin's "run like a company" vision)
 - [ ] **Promotion agent** — generates cheap/free promotion ideas (Reddit r/LegalAdviceUK, MoneySavingExpert forums, TikTok/Reels, parking-appeal SEO content, Facebook groups) and runs/schedules them. Low/zero ad budget focus.
-- [ ] **App Store submission agent** — if we wrap AppealMate as an iOS app: walks Benjamin through every App Store Connect step, answers the review questionnaire, tells him exactly where to click, handles metadata/screenshots/privacy declarations. Goal: make shipping apps repeatable so he can launch more.
+- [ ] **Play Store submission agent** — walks Benjamin through every Google Play Console step (store listing, content rating, Data safety form, screenshots, AAB upload, release tracks), answers each questionnaire, tells him exactly where to click. Goal: make shipping apps repeatable so he can launch more.
 
-## App Store decision (open)
-- Benjamin already pays for an Apple Developer account.
-- AppealMate is a web app; to ship on iOS, wrap the existing site with Capacitor (PWA -> native shell). Low effort, reuses 100% of the code.
-- CAUTION: Apple often rejects "just a website in a wrapper" unless it adds native value (e.g. camera OCR scan, push notifications, saved letters). Our OCR photo-scan + saved letters could justify it.
-- CAUTION: Apple takes 15-30% of in-app purchases. For £1.99 letters, paying via the website (Stripe) keeps 100% minus Stripe fee; in-app would lose 15-30%. Likely keep payment on web, app as a convenience funnel.
-- Recommendation: launch web first (done), revisit iOS wrapper after first revenue + the domain.
+## Android / Google Play decision (Benjamin already has a paid Play dev account)
+- [x] PWA done (manifest + service worker + icon) — site is now installable + offline, and TWA-ready.
+- [ ] Wrap as a **TWA (Trusted Web Activity)** via PWABuilder or Bubblewrap -> AAB -> upload to Play Console.
+- Keep payments on the web via Stripe (TWA loads the live site; checkout works in-app, we keep ~100% minus Stripe fee).
+  NOTE: Google Play policy technically wants Google Play Billing for in-app digital goods; TWAs linking to web checkout are a grey area. Watch for review pushback; worst case the app is a free funnel that sends users to pay on web.
+- Need real PNG icons (192/512) for the store — PWABuilder generates these from icon.svg.
+- Recommendation: web first (done), buy domain + first revenue, THEN do the TWA wrap with the submission agent.
 
 ## Other deferred
 - [ ] Support contact: email now, WhatsApp business number later.

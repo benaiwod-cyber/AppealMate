@@ -1,0 +1,15 @@
+{
+  "name": "AppealMate — Fight your parking ticket",
+  "short_name": "AppealMate",
+  "description": "Appeal a parking ticket or PCN, challenge a deposit deduction, or claim delay compensation. Get a formal letter in 2 minutes.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f8fb",
+  "theme_color": "#1f6feb",
+  "lang": "en-GB",
+  "categories": ["utilities", "productivity", "finance"],
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -21,6 +21,12 @@
 - Need real PNG icons (192/512) for the store — PWABuilder generates these from icon.svg.
 - Recommendation: web first (done), buy domain + first revenue, THEN do the TWA wrap with the submission agent.
 
+## Support chatbot + complaint routing (Benjamin's idea, future upgrade)
+- [ ] FAQ chatbot widget: answers "what do you do / how does it work / is it legal / refunds" from a fixed Q&A set (rule-based first = free, no LLM cost; upgrade to LLM later).
+- [ ] Complaint capture: if a user has a complaint, the bot collects it -> emails it to us (via Resend) -> we draft a reply.
+- [ ] Alert Benjamin: ping on new complaint (email now; Telegram/WhatsApp later).
+- Build approach: small client-side widget + a Netlify Function that posts complaints to Resend. Keep it free/serverless (same crash-proof pattern). Needs the verified domain (Resend) to email reliably.
+
 ## Other deferred
 - [ ] Support contact: email now, WhatsApp business number later.
 - [ ] PayPal as a second payment option (Stripe already covers cards + Apple/Google Pay).

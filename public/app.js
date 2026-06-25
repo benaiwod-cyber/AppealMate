@@ -32,6 +32,7 @@ function route() {
   if (view === 'terms') return renderLegal('terms');
   if (view === 'privacy') return renderLegal('privacy');
   if (view === 'refunds') return renderLegal('refunds');
+  if (view === 'contact') return renderLegal('contact');
   if (view === 'admin') return renderAdmin();
   if (view === 'feedback') return renderFeedback();
   return renderHome();
@@ -352,7 +353,14 @@ function renderLegal(which) {
     </ul>
     <p><strong>What we cannot refund.</strong> We cannot refund simply because you changed your mind after unlocking a letter, or based on the outcome of your appeal or claim. AppealMate provides a self-help template only and does not guarantee that any charge will be cancelled, any deposit returned, or any claim succeed.</p>
     <p><strong>How to request a refund.</strong> Email us within 14 days quoting the email address and date of your purchase. We aim to respond within 3 working days, and approved refunds are returned to your original payment method.</p>`;
-  const map = { terms, privacy, refunds };
+  const contact = `<h2>Contact us</h2>
+    <p>Questions, or a problem with your letter? We're happy to help.</p>
+    <p><strong>Email:</strong> <a href="mailto:benaiwod@gmail.com">benaiwod@gmail.com</a><br>
+    We aim to reply within 3 working days.</p>
+    <p>For refund requests, please include the email address and date of your purchase. See our <a href="#/refunds">Refund Policy</a>.</p>
+    <p style="color:var(--muted);font-size:.9rem">WhatsApp support coming soon.</p>
+    <p class="disclaimer" style="margin-top:18px">${DISCLAIMER}</p>`;
+  const map = { terms, privacy, refunds, contact };
   app.innerHTML = `<div class="wrap"><div class="back" onclick="location.hash=''">&larr; Home</div>
     <div class="panel fade-up">${map[which] || terms}</div></div>`;
 }

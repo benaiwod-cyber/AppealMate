@@ -31,6 +31,7 @@ function route() {
   if (view === 'tool' && TOOLS[arg]) return renderTool(arg);
   if (view === 'terms') return renderLegal('terms');
   if (view === 'privacy') return renderLegal('privacy');
+  if (view === 'refunds') return renderLegal('refunds');
   if (view === 'admin') return renderAdmin();
   if (view === 'feedback') return renderFeedback();
   return renderHome();
@@ -340,8 +341,20 @@ function renderLegal(which) {
     <p>We take your privacy seriously and follow UK GDPR.</p>
     <p>The details you type into a letter (such as your name, address and vehicle registration) are processed in your browser to generate that letter. We do not sell your data. Card details are handled entirely by Stripe; AppealMate never sees or stores your card number.</p>
     <p>If you have any questions about your data, contact us through the site.</p>`;
+  const refunds = `<h2>Refund Policy</h2>
+    <p>AppealMate sells digital products (template letters) that are generated and delivered instantly. ${DISCLAIMER}</p>
+    <p><strong>Your right to cancel.</strong> Because each letter is created and made available to download immediately, by unlocking your letter you ask for it to be supplied straight away and you acknowledge that you lose the 14-day right to cancel under the Consumer Contracts Regulations 2013 for that item.</p>
+    <p><strong>When we will refund.</strong> We want you to be happy. We will refund in full, on request, if:</p>
+    <ul>
+      <li>a technical fault stopped you downloading your letter;</li>
+      <li>you were charged more than once or charged by mistake; or</li>
+      <li>you paid but no letter was produced.</li>
+    </ul>
+    <p><strong>What we cannot refund.</strong> We cannot refund simply because you changed your mind after unlocking a letter, or based on the outcome of your appeal or claim. AppealMate provides a self-help template only and does not guarantee that any charge will be cancelled, any deposit returned, or any claim succeed.</p>
+    <p><strong>How to request a refund.</strong> Email us within 14 days quoting the email address and date of your purchase. We aim to respond within 3 working days, and approved refunds are returned to your original payment method.</p>`;
+  const map = { terms, privacy, refunds };
   app.innerHTML = `<div class="wrap"><div class="back" onclick="location.hash=''">&larr; Home</div>
-    <div class="panel fade-up">${which === 'terms' ? terms : privacy}</div></div>`;
+    <div class="panel fade-up">${map[which] || terms}</div></div>`;
 }
 
 // ---- Phase 2: monitoring dashboard (admin only) ----

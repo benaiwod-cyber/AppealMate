@@ -1,7 +1,7 @@
 // AppealMate service worker — offline shell + fast loads.
 // Bump CACHE when you change core assets.
-const CACHE = 'appealmate-v2';
-const CORE = ['/', '/index.html', '/styles.css', '/app.js', '/templates.js', '/manifest.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png'];
+const CACHE = 'appealmate-v3';
+const CORE = ['/', '/index.html', '/styles.css', '/app.js', '/templates.js', '/chatbot.js', '/manifest.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));

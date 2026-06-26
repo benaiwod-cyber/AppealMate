@@ -1,5 +1,15 @@
 # AppealMate — Backlog
 
+## ⛔ BLOCKED — Netlify deploy cap (resume ~2026-06-29)
+- Netlify free account (benaiwod, shared with Every Pound) hit "Account credit usage exceeded — new deploys blocked".
+- LIVE site + payments UNAFFECTED (still up, still taking money). Only NEW deploys blocked.
+- Ready-but-undeployed change: SVG-free manifest (PNG icons) — needed for PWABuilder/Android.
+- RESUME ~2026-06-29 (3-day wait for monthly credit reset): redeploy, then continue Android/PWABuilder build.
+- DEPLOY DISCIPLINE (decided 2026-06-26): batch ALL changes locally, deploy ONCE per launch cycle (~monthly). Do NOT deploy per-edit. Conserve credits across BOTH apps (AppealMate + Every Pound share the account).
+- PERMANENT FIX (later): migrate hosting to Cloudflare Pages (free, uncapped) when we set up appealmate.co.uk.
+
+
+
 ## Pre-public-launch gate
 - [ ] Buy **appealmate.co.uk** (~£10/yr) and connect to Netlify BEFORE promoting publicly.
       (Site is technically live on appealmate-uk.netlify.app but not promoted yet.)

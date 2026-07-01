@@ -275,10 +275,20 @@ function unlock(key) {
   renderResult(draft.tool, draft.letter);
 }
 
-// handle Stripe success redirect (?paid=<key>)
+// handle Stripe success redirect (?paid=<serverToken>&key=<clientKey>)
+// paid = server-generated random token (unforgeable without going through Stripe)
+// key  = client hash used to match the letter in sessionStorage
 function checkPaidRedirect() {
-  const p = new URLSearchParams(location.search).get('paid');
-  if (p) { sessionStorage.setItem('am_unlock_' + p, '1'); localStorage.setItem('am_paid_count', String(hasPaid() + 1)); }
+  const params = new URLSearchParams(location.search);
+  const paid = params.get('paid');  // server-generated token
+  const key  = params.get('key');   // client hash of letter (present in new flow)
+  if (!paid) return;
+  // New flow: use the client key from the URL param; legacy flow: paid IS the key
+  const unlockKey = key || paid;
+  sessionStorage.setItem('am_unlock_' + unlockKey, '1');
+  localStorage.setItem('am_paid_count', String(hasPaid() + 1));
+  // Clean the URL so the token doesn't stay in history
+  if (history.replaceState) history.replaceState({}, '', location.pathname + location.hash);
 }
 
 // ---- Phase 2: success-paste capture (Netlify Forms, no backend) ----

@@ -2,10 +2,22 @@
 // Admin-gated by ADMIN_PASS env var. Uses STRIPE_SECRET_KEY server-side only;
 // the secret never reaches the browser.
 
+const crypto = require('crypto');
+
+// Constant-time string compare that does not leak length-mismatch via throw.
+function safeEqual(a, b) {
+  const ab = Buffer.from(String(a));
+  const bb = Buffer.from(String(b));
+  if (ab.length !== bb.length) return false;
+  return crypto.timingSafeEqual(ab, bb);
+}
+
 exports.handler = async (event) => {
-  const pass = (event.queryStringParameters || {}).pass || '';
+  // Admin password via header only — never via query string (would appear in logs)
+  const headers = event.headers || {};
+  const pass = headers['x-admin-pass'] || '';
   const adminPass = process.env.ADMIN_PASS;
-  if (!adminPass || pass !== adminPass) return { statusCode: 401, body: 'unauthorized' };
+  if (!adminPass || !safeEqual(pass, adminPass)) return { statusCode: 401, body: 'unauthorized' };
 
   const secret = process.env.STRIPE_SECRET_KEY;
   if (!secret) return { statusCode: 200, body: JSON.stringify({ count: 0, gross: 0, last24: 0, byTool: {}, mode: 'no-stripe' }) };

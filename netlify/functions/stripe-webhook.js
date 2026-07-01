@@ -14,14 +14,18 @@ exports.handler = async (event) => {
   const whSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!secret) return { statusCode: 501, body: 'stripe not configured' };
 
+  // Require a signing secret. No unverified fallback: without it, anyone could
+  // POST a fake checkout.session.completed and inject arbitrary emails into the
+  // purchases store (which the follow-up job then emails). Fail closed instead.
+  if (!whSecret) return { statusCode: 503, body: 'webhook not configured' };
+
   const stripe = require('stripe')(secret);
+  // Netlify may deliver the body base64-encoded; constructEvent needs the raw
+  // bytes Stripe signed, or every event fails signature verification.
+  const rawBody = event.isBase64Encoded ? Buffer.from(event.body, 'base64').toString('utf8') : event.body;
   let evt;
   try {
-    if (whSecret) {
-      evt = stripe.webhooks.constructEvent(event.body, event.headers['stripe-signature'], whSecret);
-    } else {
-      evt = JSON.parse(event.body); // unverified fallback until signing secret is set
-    }
+    evt = stripe.webhooks.constructEvent(rawBody, event.headers['stripe-signature'], whSecret);
   } catch (e) {
     return { statusCode: 400, body: `signature error: ${e.message}` };
   }

@@ -22,11 +22,14 @@ exports.handler = async (event) => {
     return { statusCode: 200, body: 'received' };
   }
 
+  // Escape every user-supplied field before it lands in the alert email HTML —
+  // not just the message — so a crafted email/page value can't inject markup.
+  const esc = (s) => String(s).replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
   const html = `<h3>New AppealMate message / complaint</h3>
-    <p><b>From:</b> ${email || '(no email given)'}</p>
-    <p><b>Page:</b> ${page}</p>
+    <p><b>From:</b> ${esc(email) || '(no email given)'}</p>
+    <p><b>Page:</b> ${esc(page)}</p>
     <p><b>Message:</b></p>
-    <p style="white-space:pre-wrap">${message.replace(/</g, '&lt;')}</p>`;
+    <p style="white-space:pre-wrap">${esc(message)}</p>`;
 
   try {
     const res = await fetch('https://api.resend.com/emails', {

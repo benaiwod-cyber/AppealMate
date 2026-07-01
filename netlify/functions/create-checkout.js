@@ -19,8 +19,8 @@ const PRICES = {
 // Allowed origins for returnUrl — prevents open-redirect phishing via Stripe checkout
 const ALLOWED_HOSTS = [
   'appealmate-uk.netlify.app',
-  'appealmate.co.uk',
-  'www.appealmate.co.uk',
+  'appealmate.uk',
+  'www.appealmate.uk',
 ];
 
 function isAllowedReturnUrl(raw) {

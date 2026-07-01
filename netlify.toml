@@ -8,6 +8,13 @@
   to = "/index.html"
   status = 200
 
+# Never hard-cache the service worker or it can pin users to old code. The
+# browser must revalidate sw.js on every navigation so new deploys are picked up.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
 # Security headers for all pages
 [[headers]]
   for = "/*"

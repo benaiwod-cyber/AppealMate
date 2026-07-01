@@ -63,7 +63,16 @@
   </footer>
 
   <script>document.getElementById('yr').textContent = new Date().getFullYear();
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(()=>{})); }
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+      // When a freshly-deployed worker takes control, reload once so the user is
+      // instantly on the latest code — no manual hard-refresh, ever. The flag
+      // prevents a reload loop.
+      let amReloading = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (amReloading) return; amReloading = true; location.reload();
+      });
+    }
   </script>
   <script type="module" src="./app.js"></script>
   <script src="./chatbot.js" defer></script>

@@ -409,7 +409,7 @@ function renderLegal(which) {
     <p><strong>How to request a refund.</strong> Email us within 14 days quoting the email address and date of your purchase. We aim to respond within 3 working days, and approved refunds are returned to your original payment method.</p>`;
   const contact = `<h2>Contact us</h2>
     <p>Questions, or a problem with your letter? We're happy to help.</p>
-    <p><strong>Email:</strong> <a href="mailto:benaiwod@gmail.com">benaiwod@gmail.com</a><br>
+    <p><strong>Email:</strong> <a href="mailto:support@appealmate.uk">support@appealmate.uk</a><br>
     We aim to reply within 3 working days.</p>
     <p>For refund requests, please include the email address and date of your purchase. See our <a href="#/refunds">Refund Policy</a>.</p>
     <p style="color:var(--muted);font-size:.9rem">WhatsApp support coming soon.</p>

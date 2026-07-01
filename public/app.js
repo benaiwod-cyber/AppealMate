@@ -113,7 +113,10 @@ function renderTool(id) {
   const grounds = t.grounds.map(g => `
     <label class="ground" data-g="${g.id}">
       <input type="radio" name="ground" value="${g.id}">
-      <span>${esc(g.label)}</span>
+      <span class="ground-text">
+        <span class="ground-label">${esc(g.label)}</span>
+        ${g.hint ? `<span class="ground-hint">${esc(g.hint)}</span>` : ''}
+      </span>
     </label>`).join('');
 
   app.innerHTML = `
@@ -132,6 +135,7 @@ function renderTool(id) {
         </div>` : ''}
         ${fields}
         <h3 style="font-size:1.05rem;margin-top:1.2rem">What's your reason for appealing?</h3>
+        <p style="color:var(--muted);font-size:.88rem;margin-top:-6px">Not sure which applies? Read each one below — pick the closest. If none fit, choose the "put them to proof" option, which makes the other side prove their case.</p>
         <div class="grounds">${grounds}</div>
         <p class="disclaimer">${DISCLAIMER}</p>
         <button class="btn block" id="genBtn">Generate my letter</button>

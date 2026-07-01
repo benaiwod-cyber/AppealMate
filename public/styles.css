@@ -87,6 +87,9 @@ a:hover { text-decoration: underline; }
 .ground:hover { border-color: #c9d6ea; background: #fafcff; }
 .ground input { margin-top: 3px; }
 .ground.sel { border-color: var(--brand); background: #f2f7ff; }
+.ground-text { display: flex; flex-direction: column; gap: 3px; }
+.ground-label { font-weight: 500; }
+.ground-hint { color: var(--muted); font-size: .84rem; line-height: 1.4; }
 
 /* buttons */
 .btn {

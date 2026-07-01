@@ -107,13 +107,124 @@ I am therefore not liable, and I put the operator to strict proof of the driver/
 
 I request that this charge be cancelled and removed from my record. If rejected, please provide the evidence relied upon and the independent appeal route.` },
       { id: 'ntktime', label: 'Notice to Keeper arrived too late (private ticket)',
+        hint: "Private tickets only: the letter about the charge reached you more than 14 days after the parking date.",
         body: `I am writing as registered keeper regarding parking charge {{pcnRef}}, issued on {{dateIssued}} at {{location}} for vehicle {{vehicleReg}}.
 
 Where the operator relies on keeper liability under Schedule 4 of the Protection of Freedoms Act 2012, the Notice to Keeper must be served within the strict statutory time limits. The Notice here was not served within those limits. {{detail}}
 
 As the POFA timing requirements have not been met, keeper liability does not arise and the charge is unenforceable against me.
 
-I request that this charge be cancelled. If rejected, please provide my POPLA/IAS verification code.` }
+I request that this charge be cancelled. If rejected, please provide my POPLA/IAS verification code.` },
+      { id: 'notsure', label: "I'm not sure of my reason — put them to proof",
+        hint: "No clear reason? This letter forces the operator to prove their case. Many private charges quietly disappear because the operator can't produce the required evidence.",
+        body: `I am writing to formally appeal Penalty/Parking Charge Notice {{pcnRef}}, issued on {{dateIssued}} at {{location}} in respect of vehicle {{vehicleReg}}.
+
+I do not accept that this charge is properly due, and I require the operator to prove its case in full. In particular, please provide:
+
+1. Clear, dated photographs of the signage at the site, showing its position, size and wording, sufficient to establish that the terms were prominently brought to the driver's attention (Parking Eye v Beavis [2015] UKSC 67).
+2. A plan showing where each sign is located in relation to where the vehicle was parked.
+3. The full contract between the operator and the landowner authorising the operator to issue and enforce charges at this location.
+4. Clear photographs of the vehicle evidencing the alleged contravention, with times.
+5. Where keeper liability is alleged, proof of strict compliance with Schedule 4 of the Protection of Freedoms Act 2012, including the wording and timing of the Notice to Keeper.
+
+{{detail}}
+
+Until the operator produces this evidence, the charge is not substantiated and I do not accept liability. I request that the charge be cancelled. If you reject this appeal, please issue a rejection notice setting out my right to escalate to the independent appeals service (POPLA for BPA operators, the IAS for IPC operators, or the Traffic Penalty Tribunal / London Tribunals for council PCNs).` }
+    ]
+  },
+
+  escalate: {
+    id: 'escalate',
+    label: 'Escalate a Rejected Appeal',
+    tagline: 'Your first appeal was refused? Take it higher.',
+    blurb: 'Had a parking appeal rejected? Take it to the independent stage — POPLA, the IAS, or the council tribunal. Free to escalate.',
+    fields: [
+      { id: 'yourName', label: 'Your full name', type: 'text', required: true },
+      { id: 'yourAddress', label: 'Your address', type: 'textarea', required: true },
+      { id: 'operator', label: 'Parking company / council name', type: 'text', required: true },
+      { id: 'pcnRef', label: 'PCN / charge reference number', type: 'text', required: true },
+      { id: 'appealCode', label: 'POPLA / appeal / verification code (if given)', type: 'text', required: false },
+      { id: 'dateRejected', label: 'Date your appeal was rejected', type: 'date', required: true },
+      { id: 'theirReason', label: 'What reason did they give for rejecting it?', type: 'textarea', required: true },
+      { id: 'detail', label: 'Why their rejection is wrong (optional)', type: 'textarea', required: false }
+    ],
+    grounds: [
+      { id: 'popla', label: 'Appeal to POPLA (private parking — BPA operator)',
+        hint: "Use this if the operator is a member of the British Parking Association (BPA). Your rejection letter will mention POPLA and give you a 10-character code.",
+        body: `POPLA APPEAL
+
+Verification / POPLA code: {{appealCode}}
+Operator: {{operator}}
+Charge reference: {{pcnRef}}
+
+I am appealing to POPLA against the parking charge issued by {{operator}}, my appeal to the operator having been rejected on {{dateRejected}}.
+
+The operator rejected my appeal on the following basis: {{theirReason}}
+
+I do not accept that rejection for the following reasons: {{detail}}
+
+I ask POPLA to allow this appeal. The burden of proof rests on the operator to establish that a contract was formed by clear and prominent signage (Parking Eye v Beavis [2015] UKSC 67), that it has the landowner's authority to issue and enforce charges, and — where keeper liability is alleged — that it strictly complied with Schedule 4 of the Protection of Freedoms Act 2012. Where the operator cannot discharge that burden, the appeal must succeed.
+
+I request that the charge be cancelled in full.
+
+{{yourName}}
+{{yourAddress}}` },
+      { id: 'ias', label: 'Appeal to the IAS (private parking — IPC operator)',
+        hint: "Use this if the operator is a member of the International Parking Community (IPC). The rejection will point you to the Independent Appeals Service (IAS).",
+        body: `INDEPENDENT APPEALS SERVICE (IAS) APPEAL
+
+Appeal reference: {{appealCode}}
+Operator: {{operator}}
+Charge reference: {{pcnRef}}
+
+I am appealing to the IAS against the parking charge issued by {{operator}}. My appeal to the operator was rejected on {{dateRejected}}.
+
+The operator's stated reason for rejecting my appeal was: {{theirReason}}
+
+That reason is not sustainable: {{detail}}
+
+I ask the Adjudicator to allow this appeal. It is for the operator to prove, on the balance of probabilities, that the signage created a binding contract, that it has authority from the landowner to enforce, and that any keeper-liability requirements under the Protection of Freedoms Act 2012 were fully met. On the evidence, the operator cannot do so.
+
+I request that the charge be cancelled.
+
+{{yourName}}
+{{yourAddress}}` },
+      { id: 'tribunal', label: 'Council PCN — appeal to the tribunal (TPT / London Tribunals)',
+        hint: "Use this for a COUNCIL ticket after you get a Notice of Rejection. Outside London it's the Traffic Penalty Tribunal; in London it's London Tribunals.",
+        body: `FORMAL APPEAL TO THE INDEPENDENT ADJUDICATOR
+
+Council: {{operator}}
+PCN reference: {{pcnRef}}
+
+I am appealing to the independent adjudicator (the Traffic Penalty Tribunal, or London Tribunals for London authorities) against Penalty Charge Notice {{pcnRef}} issued by {{operator}}. My formal representations were rejected by a Notice of Rejection dated {{dateRejected}}.
+
+The council rejected my representations on the following basis: {{theirReason}}
+
+I do not accept that decision for the following reasons: {{detail}}
+
+I ask the adjudicator to allow this appeal and direct the council to cancel the PCN. The council must prove that the contravention occurred, that the signs and road markings were lawful, compliant and clearly visible, and that the PCN and Notice of Rejection were correctly issued. Where it cannot, the appeal must be allowed.
+
+I request that the penalty charge be cancelled.
+
+{{yourName}}
+{{yourAddress}}` },
+      { id: 'reconsider', label: 'Ask them to reconsider before going to tribunal',
+        hint: "A firmer follow-up to the operator or council asking them to think again, before you commit to the formal tribunal stage.",
+        body: `Dear {{operator}},
+
+Re: charge reference {{pcnRef}} — request for reconsideration
+
+You rejected my appeal on {{dateRejected}}, stating: {{theirReason}}
+
+Before I escalate this to the independent appeals stage, I am asking you to reconsider your decision. Your rejection does not adequately address the substance of my appeal: {{detail}}
+
+I remain willing to resolve this directly. However, if you maintain your rejection, please confirm this in writing together with the code and details I need to escalate to the independent appeals service, which I am fully prepared to do. Independent appeals frequently succeed where the operator cannot produce the required evidence, and they carry a cost to you.
+
+I request, once more, that this charge be cancelled.
+
+Yours faithfully,
+{{yourName}}
+{{yourAddress}}` }
     ]
   },
 
@@ -481,4 +592,4 @@ Yours faithfully,
   }
 };
 
-export const TOOL_ORDER = ['parking', 'deposit', 'delay', 'lba', 'parcel', 'counciltax', 'energy', 'holiday'];
+export const TOOL_ORDER = ['parking', 'escalate', 'deposit', 'delay', 'parcel', 'counciltax', 'energy', 'holiday', 'lba'];

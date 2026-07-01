@@ -9,9 +9,10 @@
 const crypto = require('crypto');
 
 const PRICES = {
-  // amounts in pence
+  // amounts in pence. Flat 199 for launch phase (first === return) until we have
+  // 100+ verified paying users; then raise `return` to introduce tiered pricing.
   first: 199,
-  return: 399,
+  return: 199,
   bundle: 599,
 };
 

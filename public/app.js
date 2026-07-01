@@ -1,8 +1,11 @@
 import { TOOLS, TOOL_ORDER } from './templates.js';
 
 // ---- config ----
-const PRICE_FIRST = '£1.99';     // first letter (hook)
-const PRICE_RETURN = '£3.99';    // subsequent
+// Flat £1.99 for every letter until we have 100+ verified paying users.
+// After that, revert PRICE_RETURN to a higher tier (e.g. £3.99) to introduce
+// returning-customer pricing. Referral codes are a later addition.
+const PRICE_FIRST = '£1.99';     // first letter
+const PRICE_RETURN = '£1.99';    // subsequent (flat for launch phase)
 const PRICE_BUNDLE = '£5.99';    // 3-letter bundle
 const DISCLAIMER = 'AppealMate provides self-help letter templates and document assistance. It is not a law firm and does not provide legal advice.';
 
@@ -249,7 +252,7 @@ function renderResult(id, letter) {
             <p class="price">${wasPrice}${price}</p>
             <p style="color:var(--muted);margin-top:-6px">Unlock the full letter and download it as a PDF.</p>
             <button class="btn block" id="payBtn">Unlock &amp; download — ${price}</button>
-            <p style="font-size:.8rem;color:var(--muted);margin-top:10px">${firstTime() ? `First letter ${PRICE_FIRST}, then ${PRICE_RETURN} each.` : `Returning price ${PRICE_RETURN} (your first letter was ${PRICE_FIRST}).`} You can re-download any letter you've paid for from <a href="#/mine">My letters</a>. Secure payment by Stripe. ${esc(DISCLAIMER)}</p>
+            <p style="font-size:.8rem;color:var(--muted);margin-top:10px">${PRICE_FIRST} per letter. You can re-download any letter you've paid for any time from <a href="#/mine">My letters</a> — no extra charge. Secure payment by Stripe. ${esc(DISCLAIMER)}</p>
           </div>`}
       </div>
     </div>`;

@@ -9,7 +9,7 @@
   const FAQ = [
     { k: ['refund', 'money back', 'cancel my payment'], a: 'We refund for technical faults, double charges, or if no letter was produced. We can\'t refund a change of mind after unlocking, or the outcome of your appeal. Full policy: <a href="#/refunds">Refunds</a>.' },
     { k: ['scam', 'legit', 'safe', 'trust', 'real', 'con'], a: 'Totally fair to check. Payments run through Stripe (we never see your card). ' + DISCLAIMER + ' You can read our <a href="#/terms">Terms</a> and <a href="#/privacy">Privacy</a> any time.' },
-    { k: ['how much', 'price', 'cost', 'pay', 'fee'], a: 'Your first letter is £1.99, then £3.99, or £5.99 for a bundle of 3. You only pay to unlock and download the finished letter.' },
+    { k: ['how much', 'price', 'cost', 'pay', 'fee'], a: 'Every letter is £1.99. You only pay to unlock and download the finished letter, and you can re-download it any time from “My letters” at no extra charge.' },
     { k: ['how', 'work', 'use', 'start'], a: 'Pick a tool (e.g. Parking Appeal), answer a few quick questions, choose your reason, and we generate a formal letter. Unlock it for £1.99 and download the PDF. Takes about 2 minutes.' },
     { k: ['legal', 'law firm', 'advice', 'solicitor', 'lawyer'], a: DISCLAIMER + ' We give you a strong, ready-to-send template based on the ground you pick — you stay in control.' },
     { k: ['guarantee', 'will it work', 'win', 'success', 'cancel the fine'], a: 'We can\'t guarantee an outcome — no one honestly can. We give you a well-structured letter using proven appeal grounds, which gives you the best fair shot.' },

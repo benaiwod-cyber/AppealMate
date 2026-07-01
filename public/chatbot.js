@@ -74,7 +74,16 @@
 
     async function handle(text) {
       add(text.replace(/</g,'&lt;'), 'amUser');
-      if (awaitingComplaint) { await sendComplaint(text); awaitingComplaint = false; return; }
+      if (awaitingComplaint) { awaitingComplaint = await sendComplaint(text); return; }
+      // "contact" / "contact a human" -> go straight into message capture, don't
+      // just repeat the FAQ blurb (that was the bug: it promised to take details
+      // but never switched into capture mode).
+      const t = text.toLowerCase();
+      if (t.includes('contact') || t.includes('a human') || t === 'human' || t.includes('speak to')) {
+        add('Sure — I\'ll pass this to the team. Please paste your <b>email + your question or complaint in one message</b> and I\'ll send it on. We reply within 3 working days.', 'amBot');
+        awaitingComplaint = true;
+        return;
+      }
       const a = answer(text);
       if (a) { add(a, 'amBot'); add('Anything else? If you\'d rather a person looks at it, type <b>contact</b>.', 'amBot'); return; }
       // no FAQ match -> offer to capture as a message/complaint
@@ -84,13 +93,18 @@
 
     async function sendComplaint(text) {
       const emailMatch = text.match(/[\w.+-]+@[\w-]+\.[\w.-]+/);
+      if (!emailMatch) {
+        add('I just need an <b>email address</b> so we can reply. Please include it with your message.', 'amBot');
+        return true; // stay in capture mode for their next line
+      }
       try {
         await fetch('/.netlify/functions/complaint', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: emailMatch ? emailMatch[0] : '', message: text, page: location.hash || '/' })
+          body: JSON.stringify({ email: emailMatch[0], message: text, page: location.hash || '/' })
         });
       } catch (e) {}
       add('Thanks — that\'s been sent to the team and we\'ll reply by email. Anything else?', 'amBot');
+      return false; // capture complete
     }
 
     panel.querySelector('#amChatForm').addEventListener('submit', (e) => {

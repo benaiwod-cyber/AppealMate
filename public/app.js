@@ -14,6 +14,30 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&
 const hasPaid = () => localStorage.getItem('am_paid_count') ? Number(localStorage.getItem('am_paid_count')) : 0;
 const firstTime = () => hasPaid() === 0;
 
+// ---- letter persistence (so a paid letter is NEVER lost) ----
+// Letters live in localStorage keyed by the same hash used for the unlock/paid
+// redirect. This survives the Stripe round-trip AND closing the tab, so a paid
+// letter can always be re-shown and re-downloaded. No email/server needed.
+const LETTERS_KEY = 'am_letters';
+function loadLetters() {
+  try { return JSON.parse(localStorage.getItem(LETTERS_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveLetter(key, data) {
+  const all = loadLetters();
+  all[key] = { ...data, key, ts: Date.now() };
+  // keep the newest 25 so storage never grows unbounded
+  const entries = Object.values(all).sort((a, b) => b.ts - a.ts).slice(0, 25);
+  const trimmed = {};
+  for (const e of entries) trimmed[e.key] = e;
+  try { localStorage.setItem(LETTERS_KEY, JSON.stringify(trimmed)); } catch {}
+}
+function getLetter(key) { return loadLetters()[key] || null; }
+function markLetterPaid(key) {
+  const all = loadLetters();
+  if (all[key]) { all[key].paid = true; try { localStorage.setItem(LETTERS_KEY, JSON.stringify(all)); } catch {} }
+}
+
 // fill {{placeholders}} from the collected values; drop empty optional lines cleanly
 function renderLetter(bodyTemplate, values) {
   const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -35,6 +59,7 @@ function route() {
   if (view === 'contact') return renderLegal('contact');
   if (view === 'admin') return renderAdmin();
   if (view === 'feedback') return renderFeedback();
+  if (view === 'mine') return renderMine();
   return renderHome();
 }
 window.addEventListener('hashchange', route);
@@ -181,6 +206,8 @@ function onGenerate(id) {
   const ground = t.grounds.find(g => g.id === draft.ground);
   const letter = renderLetter(ground.body, values);
   draft.letter = letter;
+  // Persist immediately so the letter survives the Stripe redirect / tab close.
+  saveLetter(hashKey(letter), { letter, tool: id, ground: draft.ground });
   renderResult(id, letter);
 }
 
@@ -222,7 +249,7 @@ function renderResult(id, letter) {
             <p class="price">${wasPrice}${price}</p>
             <p style="color:var(--muted);margin-top:-6px">Unlock the full letter and download it as a PDF.</p>
             <button class="btn block" id="payBtn">Unlock &amp; download — ${price}</button>
-            <p style="font-size:.8rem;color:var(--muted);margin-top:10px">Secure payment by Stripe. ${esc(DISCLAIMER)}</p>
+            <p style="font-size:.8rem;color:var(--muted);margin-top:10px">${firstTime() ? `First letter ${PRICE_FIRST}, then ${PRICE_RETURN} each.` : `Returning price ${PRICE_RETURN} (your first letter was ${PRICE_FIRST}).`} You can re-download any letter you've paid for from <a href="#/mine">My letters</a>. Secure payment by Stripe. ${esc(DISCLAIMER)}</p>
           </div>`}
       </div>
     </div>`;
@@ -282,13 +309,23 @@ function checkPaidRedirect() {
   const params = new URLSearchParams(location.search);
   const paid = params.get('paid');  // server-generated token
   const key  = params.get('key');   // client hash of letter (present in new flow)
-  if (!paid) return;
+  if (!paid) return false;
   // New flow: use the client key from the URL param; legacy flow: paid IS the key
   const unlockKey = key || paid;
   sessionStorage.setItem('am_unlock_' + unlockKey, '1');
   localStorage.setItem('am_paid_count', String(hasPaid() + 1));
+  markLetterPaid(unlockKey);
   // Clean the URL so the token doesn't stay in history
-  if (history.replaceState) history.replaceState({}, '', location.pathname + location.hash);
+  if (history.replaceState) history.replaceState({}, '', location.pathname);
+  // Re-show the exact letter that was paid for so the download button is right
+  // there — the letter was persisted before redirect, so it survives the reload.
+  const saved = getLetter(unlockKey);
+  if (saved && saved.letter) {
+    draft.tool = saved.tool; draft.ground = saved.ground; draft.letter = saved.letter;
+    renderResult(saved.tool, saved.letter);
+    return true;
+  }
+  return false;
 }
 
 // ---- Phase 2: success-paste capture (Netlify Forms, no backend) ----
@@ -375,6 +412,38 @@ function renderLegal(which) {
     <div class="panel fade-up">${map[which] || terms}</div></div>`;
 }
 
+// ---- My letters: re-open / re-download anything already paid for ----
+function renderMine() {
+  const all = Object.values(loadLetters()).sort((a, b) => b.ts - a.ts);
+  const paidOnes = all.filter(l => l.paid || sessionStorage.getItem('am_unlock_' + l.key) === '1');
+  const rows = paidOnes.map(l => {
+    const when = new Date(l.ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const title = (TOOLS[l.tool] && TOOLS[l.tool].label) || 'Letter';
+    return `<div class="field" style="display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:12px">
+      <div><b>${esc(title)}</b><br><span style="color:var(--muted);font-size:.85rem">Unlocked ${esc(when)}</span></div>
+      <button class="btn secondary" data-key="${esc(l.key)}">Open &amp; download</button>
+    </div>`;
+  }).join('');
+
+  app.innerHTML = `<div class="wrap"><div class="back" onclick="location.hash=''">&larr; Home</div>
+    <h2 class="fade-up">My letters</h2>
+    <div class="panel fade-up d1">
+      <p style="color:var(--muted)">Letters you've unlocked on this device. Open any one to view, copy or re-download the PDF — no extra charge.</p>
+      ${rows || '<p style="color:var(--muted)">No unlocked letters found on this device yet. Letters are stored in this browser, so use the same device and browser you paid on.</p>'}
+      <p class="disclaimer" style="margin-top:16px">${DISCLAIMER}</p>
+    </div></div>`;
+
+  app.querySelectorAll('button[data-key]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const l = getLetter(btn.dataset.key);
+      if (!l) return;
+      sessionStorage.setItem('am_unlock_' + l.key, '1'); // already paid — ensure view is unlocked
+      draft.tool = l.tool; draft.ground = l.ground; draft.letter = l.letter;
+      renderResult(l.tool, l.letter);
+    });
+  });
+}
+
 // ---- Phase 2: monitoring dashboard (admin only) ----
 async function renderAdmin() {
   const saved = sessionStorage.getItem('am_admin') || '';
@@ -449,5 +518,6 @@ function renderFeedback() {
 }
 
 // ---- boot ----
-checkPaidRedirect();
-route();
+// If we just came back from a successful Stripe payment, checkPaidRedirect
+// re-renders the paid letter itself — don't let route() overwrite it with home.
+if (!checkPaidRedirect()) route();

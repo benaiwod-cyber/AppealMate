@@ -288,13 +288,14 @@ function renderResult(id, letter) {
 function hashKey(s) { let h = 0; for (let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i))|0; } return Math.abs(h); }
 
 // ---- payment ----
-// Real flow: POST to /.netlify/functions/create-checkout -> Stripe Checkout ->
-// success redirect back with ?paid=<key>. Until a Stripe key is wired, a
-// confirm() stub lets the whole flow be tested end to end.
+// Real flow: POST to /api/create-checkout -> Stripe Checkout ->
+// success redirect back with ?session_id=<id>&key=<hash>. Server-side verify
+// confirms payment before unlock.
+const API_BASE = '/api';
 async function startCheckout(id, letter) {
   const key = hashKey(letter);
   try {
-    const res = await fetch('/.netlify/functions/create-checkout', {
+    const res = await fetch(API_BASE + '/create-checkout', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tool: id, key, ground: draft.ground || '', tier: firstTime() ? 'first' : 'return', returnUrl: location.href })
     });
@@ -336,7 +337,7 @@ async function checkPaidRedirect() {
   let verified = null;
   if (sessionId) {
     try {
-      const res = await fetch('/.netlify/functions/verify?session_id=' + encodeURIComponent(sessionId));
+      const res = await fetch(API_BASE + '/verify?session_id=' + encodeURIComponent(sessionId));
       if (res.ok) verified = await res.json();
     } catch {}
   }
@@ -494,7 +495,7 @@ async function loadStats() {
   const out = document.getElementById('adminOut');
   out.innerHTML = 'Loading…';
   try {
-    const res = await fetch('/.netlify/functions/stats?pass=' + encodeURIComponent(pass));
+    const res = await fetch(API_BASE + '/stats', { headers: { 'x-admin-pass': pass } });
     if (res.status === 401) { out.innerHTML = '<p style="color:#c0392b">Wrong password.</p>'; return; }
     const d = await res.json();
     sessionStorage.setItem('am_admin', pass);

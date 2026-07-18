@@ -34,7 +34,8 @@ export async function onRequestGet(context) {
     // and only that one — the client cannot substitute a different key.
     return json({ paid, key: paid ? (s.metadata && s.metadata.key) || '' : '' }, 200);
   } catch (e) {
-    return json({ paid: false, error: e.message }, 500);
+    console.error('verify error', e);
+    return json({ paid: false, error: 'verification unavailable' }, 500);
   }
 }
 

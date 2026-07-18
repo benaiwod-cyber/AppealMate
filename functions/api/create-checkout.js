@@ -71,6 +71,7 @@ export async function onRequestPost(context) {
     if (!res.ok) return new Response(JSON.stringify({ error: data.error?.message || 'stripe error' }), { status: 500 });
     return new Response(JSON.stringify({ url: data.url }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+    console.error('create-checkout error', e);
+    return new Response(JSON.stringify({ error: 'checkout unavailable' }), { status: 500 });
   }
 }

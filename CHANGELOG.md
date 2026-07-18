@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.2 — 2026-07-18
+- Migrated to Cloudflare Pages + Pages Functions (`/api/*`); Netlify Functions removed.
+- Fixed: client API calls hardcoded to `/.netlify/functions/*` — now use `/api/*` via `API_BASE` constant.
+- Fixed: stats admin panel used insecure `?pass=` query string; now uses `x-admin-pass` header.
+- Fixed: error messages from Stripe/fetch leaked in 500 responses; replaced with generic strings.
+- Added inline validation: radio group (appeal reason) shows inline error instead of `alert()`.
+- Added inline validation: required text fields get red outline + auto-focus instead of `alert()`.
+- Added `public/_headers` with CSP, HSTS, X-Frame-Options, Referrer-Policy for CF Pages.
+- Added `deploy_cf.ps1` deploy script (DPAPI-encrypted token, targets `appealmate-cf` CF project).
+- Added BACKLOG.md with backlog items and priorities.
+
 ## 1.1.1 — 2026-07-01 (security patch)
 - Fixed open redirect: returnUrl now validated against allowed origins before Stripe checkout creation.
 - Fixed paywall bypass: success_url now uses server-generated crypto token, not client-computed hash.

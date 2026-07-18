@@ -1,5 +1,59 @@
 # AppealMate — Backlog
 
+## 🧰 NEW TOOLS PIPELINE (research 2026-06-26, ranked by demand × engine-reuse × low legal risk)
+AppealMate = multi-tool letter engine. Each new tool = ONE data object in public/templates.js
+(fields[] + grounds[{label, body}]). No new app/auth/payments.
+
+NEXT BATCH (build now, deploy together after Netlify cap resets ~06-29):
+1. [BEST NEXT] Parcel lost/damaged -> RETAILER complaint (CRA 2015). 15M ppl/month hit a parcel
+   problem; £2.5bn/yr damage. Grounds: s29 risk-on-delivery, s28 non-delivery, s9 damaged/quality,
+   "retailer liable not courier", s75 escalation. Reuse HIGH, licence risk VERY LOW. Price £1.99.
+2. HMRC PAYE tax rebate. 3M P800 letters/yr, avg £750; HMRC stopped auto-cheques May 2024.
+   Grounds: P800 claim, emergency tax code, multiple PAYE jobs, unused personal allowance.
+   Reuse HIGH, risk VERY LOW. Price £2.99.
+3. Council tax band challenge / single-person discount / exemptions. 43,820 challenges/yr, 27% win,
+   saves £200-500/yr. Grounds: comparables, structural change, SPD reinstatement, disabled relief,
+   exemptions. Reuse HIGH, risk VERY LOW. Price £2.99.
+
+LATER:
+4. Section 75 / chargeback (card complaints to FOS +147%). Reuse HIGH, risk LOW-MED (FCA sector —
+   get £200-300 solicitor sign-off on template-vs-representation line). Price £2.99.
+5. Energy/broadband bill + ADR escalation (92,938 ombudsman cases, 58% billing). VERY LOW risk. £1.99.
+6. Faulty used car rejection (CRA 30-day). Motor HP = #1 FOS complaint. LOW risk (MED if finance). £3.99.
+7. Holiday/package complaint (PTR 2018, ABTA/ATOL escalation). LOW risk. £2.99.
+8. Unlawful wage/holiday-pay deduction (ERA 1996, ACAS). MED risk (FCA employment sector — scope to
+   pay only, NOT unfair dismissal; legal sign-off needed). £2.99.
+
+WORLDWIDE FLIGHT DELAY (extend existing delay tool, add departure/arrival country field):
+EU261 (€250/400/600), UK261 (£220/350/520), Canada APPR (CAD125-1000), Israel, Turkey, Brazil.
+US = NO cash comp; add a "US DOT refund request" letter instead.
+
+Full sourced report from web-researcher agent in chat 2026-06-26.
+
+
+## 🔐 SECURITY (from /cso audit 2026-06-26)
+
+DONE (code fixed locally — deploys with next batch after ~06-29):
+- [x] stripe-webhook.js: removed unsigned fallback; now fails closed (503) if
+      STRIPE_WEBHOOK_SECRET missing. Prevents fake checkout events injecting emails.
+      NOTE: STRIPE_WEBHOOK_SECRET MUST be set in Netlify env or the webhook returns 503.
+- [x] stats.js: constant-time pass compare + x-admin-pass HEADER (query ?pass= still
+      works but deprecated — update the dashboard to send the header so the secret
+      stops appearing in logs/history).
+- [x] complaint.js: escape email + page (not just message) in the alert email HTML.
+
+TODO — BENJAMIN ONLY (cannot be automated):
+- [ ] ROTATE exposed live secrets NOW (passed through chat): STRIPE_SECRET_KEY,
+      RESEND_API_KEY, NETLIFY_AUTH_TOKEN. Roll each in its dashboard, update Netlify
+      env + local .env, check Stripe/Resend logs for abuse in the exposure window.
+- [ ] After deploy: switch the stats dashboard call to send `x-admin-pass` header,
+      then rotate ADMIN_PASS.
+
+LATER (hardening, low risk):
+- [ ] Add Content-Security-Policy + security headers via netlify.toml.
+- [ ] create-checkout.js: validate returnUrl against an allowlist of own domains.
+- [ ] ICO data-protection fee registration (compliance, not security — we collect PII).
+
 ## ⛔ BLOCKED — Netlify deploy cap (resume ~2026-06-29)
 - Netlify free account (benaiwod, shared with Every Pound) hit "Account credit usage exceeded — new deploys blocked".
 - LIVE site + payments UNAFFECTED (still up, still taking money). Only NEW deploys blocked.

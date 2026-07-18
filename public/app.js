@@ -312,27 +312,37 @@ function unlock(key) {
 // handle Stripe success redirect (?paid=<serverToken>&key=<clientKey>)
 // paid = server-generated random token (unforgeable without going through Stripe)
 // key  = client hash used to match the letter in sessionStorage
-function checkPaidRedirect() {
+async function checkPaidRedirect() {
   const params = new URLSearchParams(location.search);
-  const paid = params.get('paid');  // server-generated token
-  const key  = params.get('key');   // client hash of letter (present in new flow)
-  if (!paid) return false;
-  // New flow: use the client key from the URL param; legacy flow: paid IS the key
-  const unlockKey = key || paid;
+  const sessionId = params.get('session_id');
+  const urlKey = params.get('key');
+  // Nothing payment-related in the URL -> normal navigation.
+  if (!sessionId && !params.get('paid')) return false;
+  // SECURITY: a URL param is NOT proof of payment. The ONLY unlock gate is a
+  // server call to /verify, which asks Stripe if the session was actually paid.
+  let verified = null;
+  if (sessionId) {
+    try {
+      const res = await fetch('/.netlify/functions/verify?session_id=' + encodeURIComponent(sessionId));
+      if (res.ok) verified = await res.json();
+    } catch {}
+  }
+  // Clean the URL either way so ids don't linger in history.
+  if (history.replaceState) history.replaceState({}, '', location.pathname);
+  if (!verified || !verified.paid) return false; // NOT paid -> never unlock
+  const unlockKey = verified.key || urlKey;
+  if (!unlockKey) return false;
   sessionStorage.setItem('am_unlock_' + unlockKey, '1');
   localStorage.setItem('am_paid_count', String(hasPaid() + 1));
   markLetterPaid(unlockKey);
-  // Clean the URL so the token doesn't stay in history
-  if (history.replaceState) history.replaceState({}, '', location.pathname);
   // Re-show the exact letter that was paid for so the download button is right
   // there — the letter was persisted before redirect, so it survives the reload.
   const saved = getLetter(unlockKey);
   if (saved && saved.letter) {
     draft.tool = saved.tool; draft.ground = saved.ground; draft.letter = saved.letter;
     renderResult(saved.tool, saved.letter);
-    return true;
   }
-  return false;
+  return true; // payment verified with Stripe -> handled
 }
 
 // ---- Phase 2: success-paste capture (Netlify Forms, no backend) ----
@@ -527,4 +537,4 @@ function renderFeedback() {
 // ---- boot ----
 // If we just came back from a successful Stripe payment, checkPaidRedirect
 // re-renders the paid letter itself — don't let route() overwrite it with home.
-if (!checkPaidRedirect()) route();
+checkPaidRedirect().then((handled) => { if (!handled) route(); });

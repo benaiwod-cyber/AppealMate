@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0 — 2026-07-26
+- Added Cloudflare analytics integration to admin dashboard (pageviews & requests, 24h window).
+- Displays analytics metrics alongside Stripe sales data in stats endpoint (`/api/stats`).
+- Admin UI conditionally shows analytics section when Cloudflare credentials are configured.
+- Falls back to Stripe-only view when Cloudflare analytics unavailable.
+- Added `wrangler.toml` configuration file (Cloudflare Pages deployment config).
+
 ## 1.1.2 — 2026-07-18
 - Migrated to Cloudflare Pages + Pages Functions (`/api/*`); Netlify Functions removed.
 - Fixed: client API calls hardcoded to `/.netlify/functions/*` — now use `/api/*` via `API_BASE` constant.

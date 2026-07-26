@@ -3,3 +3,8 @@ pages_build_output_dir = "_cf_build"
 
 [vars]
 ADMIN_PASS = "BEN10owa"
+
+# Analytics Engine binding (for event tracking - user clicks, letters generated, conversions)
+# Enable in Cloudflare Dashboard -> Analytics Engine after deployment
+[[analytics_engine_datasets]]
+binding = "ANALYTICS_ENGINE"

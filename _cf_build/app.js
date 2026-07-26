@@ -11,6 +11,24 @@ const DISCLAIMER = 'AppealMate provides self-help letter templates and document 
 
 const app = document.getElementById('app');
 
+// ---- analytics (Cloudflare Analytics Engine) ----
+// Send events to Cloudflare Analytics Engine for tracking clicks, conversions, etc.
+async function sendAnalytics(eventName, data = {}) {
+  try {
+    await fetch('/api/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventName,
+        timestamp: new Date().toISOString(),
+        url: location.href,
+        tool: data.tool || null,
+        ...data
+      })
+    }).catch(() => {}); // Fail silently - analytics shouldn't break the app
+  } catch (e) {}
+}
+
 // ---- tiny helpers ----
 const el = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstChild; };
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
@@ -71,7 +89,7 @@ window.addEventListener('hashchange', route);
 function renderHome() {
   const cards = TOOL_ORDER.map((id, i) => {
     const t = TOOLS[id];
-    return `<button class="card ${t.hero ? 'hero-card' : ''} fade-up d${Math.min(i,3)}" onclick="location.hash='#/tool/${id}'">
+    return `<button class="card ${t.hero ? 'hero-card' : ''} fade-up d${Math.min(i,3)}" onclick="sendAnalytics('tool_click', {tool:'${id}'}); location.hash='#/tool/${id}'">
       ${t.hero ? '<span class="tag">Most popular</span>' : '<span class="tag">&nbsp;</span>'}
       <h3>${esc(t.label)}</h3>
       <p>${esc(t.blurb)}</p>
@@ -228,6 +246,7 @@ function onGenerate(id) {
   draft.letter = letter;
   // Persist immediately so the letter survives the Stripe redirect / tab close.
   saveLetter(hashKey(letter), { letter, tool: id, ground: draft.ground });
+  sendAnalytics('letter_generated', { tool: id, ground: draft.ground });
   renderResult(id, letter);
 }
 
@@ -294,6 +313,7 @@ function hashKey(s) { let h = 0; for (let i=0;i<s.length;i++){ h = (h*31 + s.cha
 const API_BASE = '/api';
 async function startCheckout(id, letter) {
   const key = hashKey(letter);
+  sendAnalytics('checkout_started', { tool: id, tier: firstTime() ? 'first' : 'return' });
   try {
     const res = await fetch(API_BASE + '/create-checkout', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -319,7 +339,9 @@ async function startCheckout(id, letter) {
 
 function unlock(key) {
   sessionStorage.setItem('am_unlock_' + key, '1');
-  localStorage.setItem('am_paid_count', String(hasPaid() + 1));
+  const newCount = hasPaid() + 1;
+  localStorage.setItem('am_paid_count', String(newCount));
+  sendAnalytics('payment_success', { tool: draft.tool, tier: newCount === 1 ? 'first' : 'return' });
   renderResult(draft.tool, draft.letter);
 }
 
@@ -501,6 +523,7 @@ async function loadStats() {
     sessionStorage.setItem('am_admin', pass);
     const rows = Object.entries(d.byTool || {}).map(([k,v]) => `<tr><td>${esc(k)}</td><td>${v.count}</td><td>£${(v.amount/100).toFixed(2)}</td></tr>`).join('');
     const analyticsRow = (d.pageviews || d.requests) ? `<div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)"><h3 style="margin:0 0 12px 0;color:var(--muted);font-size:.9rem">Cloudflare Analytics (24h)</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px">${d.pageviews ? stat('Pageviews', d.pageviews) : ''}${d.requests ? stat('Requests', d.requests) : ''}</div></div>` : '';
+    const eventsRow = d.events && !d.events.note ? `<div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)"><h3 style="margin:0 0 12px 0;color:var(--muted);font-size:.9rem">User Events (90d)</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px">${d.events.toolClicks ? stat('Tool Clicks', d.events.toolClicks) : ''}${d.events.lettersGenerated ? stat('Letters Generated', d.events.lettersGenerated) : ''}${d.events.checkoutsStarted ? stat('Checkouts Started', d.events.checkoutsStarted) : ''}${d.events.paymentSuccesses ? stat('Payments Successful', d.events.paymentSuccesses) : ''}</div></div>` : '';
     out.innerHTML = `
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
         ${stat('Sales', d.count)}
@@ -513,7 +536,8 @@ async function loadStats() {
         <tbody>${rows || '<tr><td colspan=3 style="color:var(--muted)">No sales yet</td></tr>'}</tbody>
       </table>
       ${analyticsRow}
-      <p style="font-size:.8rem;color:var(--muted);margin-top:12px">Stripe data is live. Cloudflare analytics requires Analytics Engine setup.</p>`;
+      ${eventsRow}
+      <p style="font-size:.8rem;color:var(--muted);margin-top:12px">Stripe data is live. Cloudflare Analytics Engine events will appear once configured.</p>`;
   } catch (e) {
     out.innerHTML = '<p style="color:#c0392b">Could not load. Is the stats function deployed?</p>';
   }

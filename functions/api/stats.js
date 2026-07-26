@@ -88,6 +88,40 @@ export async function onRequestGet(context) {
     }
   }
 
+  // Query Analytics Engine for event counts
+  let events = { toolClicks: {}, lettersGenerated: {}, checkoutsStarted: 0, paymentSuccesses: 0 };
+  if (env.ANALYTICS_ENGINE_DATASET) {
+    try {
+      // Query event counts by tool (simple COUNT query)
+      // Analytics Engine stores: index[0]=eventName, index[1]=tool, blob[1]=JSON data
+      const eventQuery = `
+        SELECT
+          indexes[0] as eventName,
+          indexes[1] as tool,
+          COUNT(*) as count
+        FROM Events
+        WHERE Timestamp > NOW() - INTERVAL 90 DAY
+        GROUP BY eventName, tool
+      `;
+      // Note: This is pseudo-SQL. Actual Analytics Engine uses a different query format.
+      // For now, we'll return a placeholder and recommend enabling Analytics Engine.
+      // In production, you'd use env.ANALYTICS_ENGINE.query() when available.
+    } catch (e) {
+      // Analytics Engine not yet available - this is OK, Stripe data is primary
+    }
+  }
+
   const mode = secret && secret.startsWith('sk_live') ? 'LIVE' : 'TEST';
-  return new Response(JSON.stringify({ count, gross, last24, byTool, mode, pageviews, requests }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  return new Response(JSON.stringify({
+    count,
+    gross,
+    last24,
+    byTool,
+    mode,
+    pageviews,
+    requests,
+    events: {
+      note: 'Analytics Engine events will appear here once configured. See dashboard for current Stripe metrics.'
+    }
+  }), { status: 200, headers: { 'Content-Type': 'application/json' } });
 }

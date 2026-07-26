@@ -500,6 +500,7 @@ async function loadStats() {
     const d = await res.json();
     sessionStorage.setItem('am_admin', pass);
     const rows = Object.entries(d.byTool || {}).map(([k,v]) => `<tr><td>${esc(k)}</td><td>${v.count}</td><td>£${(v.amount/100).toFixed(2)}</td></tr>`).join('');
+    const analyticsRow = (d.pageviews || d.requests) ? `<div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)"><h3 style="margin:0 0 12px 0;color:var(--muted);font-size:.9rem">Cloudflare Analytics (24h)</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px">${d.pageviews ? stat('Pageviews', d.pageviews) : ''}${d.requests ? stat('Requests', d.requests) : ''}</div></div>` : '';
     out.innerHTML = `
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
         ${stat('Sales', d.count)}
@@ -511,7 +512,8 @@ async function loadStats() {
         <thead><tr style="text-align:left;color:var(--muted)"><th>Tool</th><th>Sales</th><th>Revenue</th></tr></thead>
         <tbody>${rows || '<tr><td colspan=3 style="color:var(--muted)">No sales yet</td></tr>'}</tbody>
       </table>
-      <p style="font-size:.8rem;color:var(--muted);margin-top:12px">Live from Stripe. Success-story submissions are in your Netlify dashboard → Forms.</p>`;
+      ${analyticsRow}
+      <p style="font-size:.8rem;color:var(--muted);margin-top:12px">Stripe data is live. Cloudflare analytics requires Analytics Engine setup.</p>`;
   } catch (e) {
     out.innerHTML = '<p style="color:#c0392b">Could not load. Is the stats function deployed?</p>';
   }

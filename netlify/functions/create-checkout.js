@@ -28,8 +28,9 @@ function isAllowedReturnUrl(raw) {
   try {
     const { hostname, protocol } = new URL(raw);
     if (protocol !== 'https:' && protocol !== 'http:') return false;
+    // Exact-match only. A prefix like startsWith('10.') would match a
+    // registrable domain such as "10.evil.com" -> open redirect + key leak.
     if (['localhost', '127.0.0.1'].includes(hostname)) return true;
-    if (hostname.startsWith('192.168.') || hostname.startsWith('10.')) return true;
     return ALLOWED_HOSTS.includes(hostname);
   } catch { return false; }
 }
@@ -73,7 +74,7 @@ exports.handler = async (event) => {
         },
         quantity: 1,
       }],
-      success_url: `${base}?paid=${encodeURIComponent(serverToken)}&key=${encodeURIComponent(key)}`,
+      success_url: `${base}?paid=1&key=${encodeURIComponent(key)}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: returnUrl,
       metadata: { tool: String(tool || ''), key: String(key), ground: String(ground || ''), serverToken },
     });

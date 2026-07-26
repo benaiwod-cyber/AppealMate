@@ -1,0 +1,5 @@
+name = "appealmate-cf"
+pages_build_output_dir = "_cf_build"
+
+[vars]
+ADMIN_PASS = "BEN10owa"

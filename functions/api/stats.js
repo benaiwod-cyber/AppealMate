@@ -18,37 +18,76 @@ export async function onRequestGet(context) {
   if (!adminPass || !safeEqual(pass, adminPass)) return new Response('unauthorized', { status: 401 });
 
   const secret = env.STRIPE_SECRET_KEY;
-  if (!secret) return new Response(JSON.stringify({ count: 0, gross: 0, last24: 0, byTool: {}, mode: 'no-stripe' }), { status: 200 });
+  const cfToken = env.CLOUDFLARE_API_TOKEN;
+  const cfZoneId = env.CLOUDFLARE_ZONE_ID;
 
-  try {
-    const since = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 90;
-    const dayAgo = Math.floor(Date.now() / 1000) - 86400;
-    let starting_after = '', count = 0, gross = 0, last24 = 0;
-    const byTool = {};
+  // Start with Stripe data
+  let count = 0, gross = 0, last24 = 0, byTool = {};
+  if (secret) {
+    try {
+      const since = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 90;
+      const dayAgo = Math.floor(Date.now() / 1000) - 86400;
+      let starting_after = '';
 
-    for (let i = 0; i < 10; i++) {
-      const qs = new URLSearchParams({ limit: '100', 'created[gte]': String(since) });
-      if (starting_after) qs.set('starting_after', starting_after);
-      const res = await fetch(`https://api.stripe.com/v1/checkout/sessions?${qs}`, {
-        headers: { Authorization: `Bearer ${secret}` },
-      });
-      const page = await res.json();
-      if (!res.ok) return new Response(JSON.stringify({ error: page.error?.message || 'stripe error' }), { status: 500 });
-      for (const s of page.data) {
-        if (s.payment_status !== 'paid') continue;
-        count++; gross += s.amount_total || 0;
-        if (s.created >= dayAgo) last24++;
-        const tool = (s.metadata && s.metadata.tool) || 'unknown';
-        byTool[tool] = byTool[tool] || { count: 0, amount: 0 };
-        byTool[tool].count++; byTool[tool].amount += s.amount_total || 0;
+      for (let i = 0; i < 10; i++) {
+        const qs = new URLSearchParams({ limit: '100', 'created[gte]': String(since) });
+        if (starting_after) qs.set('starting_after', starting_after);
+        const res = await fetch(`https://api.stripe.com/v1/checkout/sessions?${qs}`, {
+          headers: { Authorization: `Bearer ${secret}` },
+        });
+        const page = await res.json();
+        if (!res.ok) return new Response(JSON.stringify({ error: page.error?.message || 'stripe error' }), { status: 500 });
+        for (const s of page.data) {
+          if (s.payment_status !== 'paid') continue;
+          count++; gross += s.amount_total || 0;
+          if (s.created >= dayAgo) last24++;
+          const tool = (s.metadata && s.metadata.tool) || 'unknown';
+          byTool[tool] = byTool[tool] || { count: 0, amount: 0 };
+          byTool[tool].count++; byTool[tool].amount += s.amount_total || 0;
+        }
+        if (!page.has_more) break;
+        starting_after = page.data[page.data.length - 1].id;
       }
-      if (!page.has_more) break;
-      starting_after = page.data[page.data.length - 1].id;
+    } catch (e) {
+      return new Response(JSON.stringify({ error: e.message }), { status: 500 });
     }
-
-    const mode = secret.startsWith('sk_live') ? 'LIVE' : 'TEST';
-    return new Response(JSON.stringify({ count, gross, last24, byTool, mode }), { status: 200, headers: { 'Content-Type': 'application/json' } });
-  } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500 });
   }
+
+  // Add Cloudflare analytics (pageviews, requests in last 24h)
+  let pageviews = 0, requests = 0;
+  if (cfToken && cfZoneId) {
+    try {
+      const query = `{
+        viewer {
+          zones(filter: {zoneTag: "${cfZoneId}"}) {
+            httpRequests1dGroups(limit: 1, orderBy: [date_DESC]) {
+              sum {
+                requests
+                pageViews
+              }
+            }
+          }
+        }
+      }`;
+      const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${cfToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query }),
+      });
+      const data = await res.json();
+      if (data.data && data.data.viewer && data.data.viewer.zones[0]) {
+        const stats = data.data.viewer.zones[0].httpRequests1dGroups[0].sum;
+        requests = stats.requests || 0;
+        pageviews = stats.pageViews || 0;
+      }
+    } catch (e) {
+      // Silently fail - Stripe data is primary
+    }
+  }
+
+  const mode = secret && secret.startsWith('sk_live') ? 'LIVE' : 'TEST';
+  return new Response(JSON.stringify({ count, gross, last24, byTool, mode, pageviews, requests }), { status: 200, headers: { 'Content-Type': 'application/json' } });
 }

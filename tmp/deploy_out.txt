@@ -1,0 +1,26 @@
+Get-Content: C:\Users\benja\appealmate\deploy_cf.ps1:7
+Line |
+   7 |  … COUNT_ID = (Get-Content "$PSScriptRoot\.secrets\cloudflare_account_id …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot find path 'C:\Users\benja\appealmate\.secrets\cloudflare_account_id.txt'
+     | because it does not exist.
+
+InvalidOperation: C:\Users\benja\appealmate\deploy_cf.ps1:7
+Line |
+   7 |  $env:CLOUDFLARE_ACCOUNT_ID = (Get-Content "$PSScriptRoot\.secrets\clo …
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | You cannot call a method on a null-valued expression.
+
+
+ ⛅️ wrangler 4.107.0 (update available 4.112.0)
+───────────────────────────────────────────────
+✨ Compiled Worker successfully
+Uploading... (18/19)
+Uploading... (19/19)
+✨ Success! Uploaded 1 files (18 already uploaded) (0.59 sec)
+
+✨ Uploading _headers
+✨ Uploading Functions bundle
+🌎 Deploying...
+✨ Deployment complete! Take a peek over at https://d97a8a05.appealmate-cf.pages.dev
+✨ Deployment alias URL: https://fix-letter-delivery-and-chat.appealmate-cf.pages.dev

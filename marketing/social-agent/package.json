@@ -1,0 +1,19 @@
+{
+  "name": "appealmate-social-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Approval-first local social media queue for AppealMate.",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "verify": "node src/cli.mjs verify",
+    "seed": "node src/cli.mjs cycle",
+    "status": "node src/cli.mjs status",
+    "dispatch": "node src/cli.mjs dispatch",
+    "check": "node --check src/agent.mjs && node --check src/server.mjs && node --check src/cli.mjs && node --test",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

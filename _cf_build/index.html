@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AppealMate — Fight your parking ticket in 2 minutes</title>
+  <meta name="description" content="Appeal a parking ticket or PCN, challenge a deposit deduction, or claim train and flight delay compensation. Get a formal letter in 2 minutes from £1.99.">
+  <link rel="canonical" href="https://appealmate.uk/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AppealMate">
+  <meta property="og:title" content="AppealMate — Fight your parking ticket in 2 minutes">
+  <meta property="og:description" content="Appeal a parking ticket or PCN, challenge a deposit deduction, or claim train and flight delay compensation. A formal letter in 2 minutes from £1.99.">
+  <meta property="og:url" content="https://appealmate.uk/">
+  <meta property="og:image" content="https://appealmate.uk/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://appealmate.uk/#org",
+        "name": "AppealMate",
+        "url": "https://appealmate.uk/",
+        "logo": "https://appealmate.uk/icon-512.png",
+        "description": "UK self-help letter generator for parking ticket appeals, tenancy deposit disputes, train and flight delay claims, and letters before action."
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://appealmate.uk/#website",
+        "url": "https://appealmate.uk/",
+        "name": "AppealMate",
+        "publisher": { "@id": "https://appealmate.uk/#org" },
+        "inLanguage": "en-GB"
+      }
+    ]
+  }
+  </script>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#1f6feb">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <!-- pdf-lib for client-side PDF generation -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"
+          crossorigin="anonymous"></script>
+  <!-- Tesseract.js: client-side OCR for the photo-scan feature (free, no server) -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"
+          crossorigin="anonymous"></script>
+</head>
+<body>
+  <header class="site-head">
+    <div class="wrap">
+      <a class="logo" href="#/">Appeal<b>Mate</b></a>
+      <a href="#/tool/parking" class="btn secondary" style="padding:8px 14px">Fight a ticket</a>
+    </div>
+  </header>
+
+  <main id="app"><!-- rendered by app.js --></main>
+
+  <!-- Phase 2: success-paste capture. Netlify detects this static form at deploy
+       time; app.js submits to it via fetch. Wins land in the Netlify dashboard
+       (Forms) for review, then get promoted into the template library. -->
+  <form name="wins" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="text" name="tool">
+    <input type="text" name="ground">
+    <input type="text" name="outcome">
+    <textarea name="notes"></textarea>
+    <input type="text" name="bot-field">
+  </form>
+  <!-- Outcome feedback from the follow-up email link (#/feedback). -->
+  <form name="outcomes" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="text" name="token">
+    <input type="text" name="outcome">
+    <textarea name="notes"></textarea>
+    <input type="text" name="bot-field">
+  </form>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <div>© <span id="yr"></span> AppealMate · Not a law firm · No legal advice</div>
+      <div style="display:flex;gap:16px">
+        <a href="/guides/how-to-appeal-a-parking-ticket.html">Guides</a>
+        <a href="#/mine">My letters</a>
+        <a href="#/contact">Contact</a>
+        <a href="#/terms">Terms</a>
+        <a href="#/privacy">Privacy</a>
+        <a href="#/refunds">Refunds</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+      // When a freshly-deployed worker takes control, reload once so the user is
+      // instantly on the latest code — no manual hard-refresh, ever. The flag
+      // prevents a reload loop.
+      let amReloading = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (amReloading) return; amReloading = true; location.reload();
+      });
+    }
+  </script>
+  <script type="module" src="./app.js"></script>
+  <script src="./chatbot.js" defer></script>
+</body>
+</html>

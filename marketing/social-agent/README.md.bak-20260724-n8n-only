@@ -1,0 +1,80 @@
+# AppealMate Social Agent
+
+Approval-first social scheduling for AppealMate. It turns the finished July 2026 campaign pack into a rolling four-week queue, gives the owner a local review dashboard, records performance, and changes future content selection using measured results.
+
+## What works now
+
+- Maintains three proposed posts per week for Instagram, Facebook and video-compatible TikTok slots.
+- Uses 12 compliant content variants backed by 14 finished PNG/MP4 assets.
+- Lets the owner preview, edit, approve, reject and reschedule each post at `http://127.0.0.1:3210`.
+- Records impressions, clicks, tool starts, purchases and spend by post.
+- Ranks future content using smoothed click/purchase performance with a fixed exploration slot.
+- Generates idempotent outbox manifests for approved, due posts.
+- Includes an n8n daily-draft workflow and a separately locked dispatch workflow.
+
+## Hard safety gates
+
+- Every new item starts as `draft`.
+- Editing an approved item returns it to `draft`.
+- The default publisher is `outbox`; it cannot make a public post.
+- Automatic ad spend is hard-disabled. The £5 weekly figure is stored only as a planning limit.
+- Community/group replies are not automated. They must remain permission-aware and help-first.
+- Captions must retain the legal/outcome disclaimer and production domain.
+- The server binds to localhost only.
+
+## Commands
+
+```powershell
+cd C:\Users\benja\appealmate\marketing\social-agent
+npm run check
+npm run verify
+npm run seed
+npm start
+```
+
+Useful queue commands:
+
+```powershell
+node src/cli.mjs status
+node src/cli.mjs approve ITEM_ID
+node src/cli.mjs reject ITEM_ID "Reason to revise"
+node src/cli.mjs dispatch --force
+node src/cli.mjs metrics ITEM_ID instagram 1000 50 12 2 0
+node src/cli.mjs export
+```
+
+`dispatch --force` in the default `outbox` mode writes a JSON manifest under `outbox/`; it does not publish.
+
+## n8n workflows
+
+- `workflows/daily-drafts.json`: safe to activate. At 06:30 Europe/London it calls `/api/cycle`, which only maintains drafts.
+- `workflows/dispatch-approved.json`: intentionally inactive and its dispatch node is disabled. Enable it only after a publisher and a shared internal key are configured.
+
+The local n8n user folder is `C:\Users\benja\.n8n-local`. Import with:
+
+```powershell
+$env:N8N_USER_FOLDER = 'C:\Users\benja\.n8n-local'
+n8n import:workflow --input=workflows\daily-drafts.json
+n8n import:workflow --input=workflows\dispatch-approved.json
+```
+
+## Publisher wiring
+
+Postiz was not present or reachable when this agent was restored. The implementation therefore uses a publisher adapter instead of inventing a Postiz endpoint.
+
+To connect a verified publisher later:
+
+1. Set `publisher.mode` in `config/agent.json` to `webhook`.
+2. Set `SOCIAL_PUBLISH_WEBHOOK_URL` for the local service.
+3. Optionally set `SOCIAL_PUBLISH_WEBHOOK_TOKEN`.
+4. Configure a random `SOCIAL_AGENT_INTERNAL_KEY` in both the local agent and n8n.
+5. Test one private/draft post per platform.
+6. Enable the n8n dispatch node, then activate the locked workflow.
+
+The webhook receives an `Idempotency-Key` header and a JSON body containing the approved caption, channel list, absolute local asset paths and scheduled time. The agent marks an item `posted` only after a successful publisher response.
+
+## Recovery
+
+Runtime state is under `state/queue.json`. PM2 should run `src/server.mjs` as `appealmate-social-agent` and save the process list. n8n recreates missing future drafts daily; IDs are deterministic, so repeated cycles do not duplicate the same slot.
+
+See `DESIGN.md` for the approach ranking, growth loop and 1M-user reality check.

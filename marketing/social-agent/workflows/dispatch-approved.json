@@ -1,0 +1,90 @@
+{
+  "name": "AppealMate Social Agent - Dispatch Approved (LOCKED)",
+  "id": "amSocialDispat01",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Locked publisher workflow\nKeep this workflow inactive until a real publisher is configured and SOCIAL_AGENT_INTERNAL_KEY is set in n8n and the local agent. Even then, only due items with explicit approval are eligible. The current outbox mode makes no public post.",
+        "height": 260,
+        "width": 520,
+        "color": 3
+      },
+      "id": "1bf05e7c-a14f-4a7b-bc3b-91d78fb0b2da",
+      "name": "LOCKED - Read Before Activation",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "32285d51-c951-4dc0-82d0-58a2f034e11d",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:3210/api/dispatch",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Social-Agent-Key",
+              "value": "={{ $env.SOCIAL_AGENT_INTERNAL_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0c9360fd-3cc3-4933-9f72-7fbcd69f4897",
+      "name": "Dispatch Due Approved Only",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        20,
+        80
+      ],
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Due Approved Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/London"
+  },
+  "versionId": "08478e18-0903-44d0-8176-7085cfc263b0",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

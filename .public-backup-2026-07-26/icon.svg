@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="AppealMate">
+  <rect width="512" height="512" rx="112" fill="#1f6feb"/>
+  <!-- envelope / letter -->
+  <rect x="116" y="150" width="280" height="200" rx="20" fill="#ffffff"/>
+  <path d="M116 178 L256 270 L396 178" fill="none" stroke="#1f6feb" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- check badge -->
+  <circle cx="372" cy="356" r="64" fill="#15c47e" stroke="#ffffff" stroke-width="12"/>
+  <path d="M344 356 L366 378 L402 336" fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

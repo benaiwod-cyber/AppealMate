@@ -1,0 +1,7 @@
+state/*.json
+state/*.tmp-*
+outbox/*
+reports/*
+!state/.gitkeep
+!outbox/.gitkeep
+!reports/.gitkeep

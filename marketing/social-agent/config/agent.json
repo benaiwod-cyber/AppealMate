@@ -1,0 +1,64 @@
+{
+  "status": "paused",
+  "pausedAt": "2026-07-26T12:00:00Z",
+  "pausedReason": "Legal compliance review — awaiting clearance before resuming operations",
+  "brand": "AppealMate",
+  "siteUrl": "https://appealmate.uk/",
+  "timeZone": "Europe/London",
+  "approvalRequired": true,
+  "horizonDays": 28,
+  "supportedChannels": [
+    "instagram",
+    "facebook",
+    "tiktok"
+  ],
+  "cadence": [
+    {
+      "dayOfWeek": 1,
+      "time": "18:30",
+      "channels": [
+        "instagram",
+        "facebook"
+      ],
+      "formats": [
+        "carousel",
+        "static"
+      ]
+    },
+    {
+      "dayOfWeek": 3,
+      "time": "12:30",
+      "channels": [
+        "instagram",
+        "facebook",
+        "tiktok"
+      ],
+      "formats": [
+        "reel"
+      ]
+    },
+    {
+      "dayOfWeek": 5,
+      "time": "17:30",
+      "channels": [
+        "instagram",
+        "facebook"
+      ],
+      "formats": [
+        "static",
+        "story"
+      ]
+    }
+  ],
+  "learning": {
+    "exploreEvery": 4,
+    "letterRevenueGbp": 1.99
+  },
+  "paidAds": {
+    "weeklyBudgetGbp": 5,
+    "autoSpend": false
+  },
+  "publisher": {
+    "mode": "outbox"
+  }
+}

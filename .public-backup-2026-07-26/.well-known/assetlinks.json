@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "uk.appealmate.twa",
+    "sha256_cert_fingerprints": ["A6:27:34:AF:34:51:17:68:86:41:5D:D8:1F:D8:73:81:B3:14:AD:B9:43:D3:EE:0D:5F:6A:AA:09:87:81:92:7F"]
+  }
+}]

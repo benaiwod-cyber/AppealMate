@@ -1,0 +1,116 @@
+{
+  "name": "AppealMate Social Agent - Daily Drafts",
+  "id": "amSocialDrafts01",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Safe always-on workflow\nRuns the local AppealMate agent every morning to maintain a four-week DRAFT queue. It cannot approve posts, spend ad budget, or publish anything.",
+        "height": 220,
+        "width": 420,
+        "color": 5
+      },
+      "id": "24d82f80-8d43-4b94-a05f-ecbc0554bb01",
+      "name": "Safety Notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "02782b4d-d41e-49b5-9aae-ed15a4e27269",
+      "name": "Daily 06:30 Draft Cycle",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -300,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:3210/api/cycle",
+        "options": {}
+      },
+      "id": "eb745f87-2961-4175-81f3-124cc6d7e08f",
+      "name": "Maintain Four-Week Draft Queue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -40,
+        40
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "402e91b5-e31f-4cee-b2a8-0d98072d268b",
+      "name": "Manual Health Check",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:3210/healthz",
+        "options": {}
+      },
+      "id": "89832f1b-1056-47f1-ae15-f5a28334011e",
+      "name": "Verify Agent Safeguards",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -40,
+        180
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 06:30 Draft Cycle": {
+      "main": [
+        [
+          {
+            "node": "Maintain Four-Week Draft Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Health Check": {
+      "main": [
+        [
+          {
+            "node": "Verify Agent Safeguards",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/London"
+  },
+  "versionId": "c6688b2e-49ff-44ec-a503-01814153077c",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

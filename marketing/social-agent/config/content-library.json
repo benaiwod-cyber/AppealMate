@@ -1,0 +1,176 @@
+[
+  {
+    "id": "parking-direct-static",
+    "format": "static",
+    "assets": [
+      "../campaign-2026-07/exports/appealmate-parking-square-1080.png"
+    ],
+    "channels": [
+      "instagram",
+      "facebook"
+    ],
+    "caption": "Appealing a council PCN or private parking charge? Answer a few questions, choose the reason that fits, and create a formal letter ready to review and send. £1.99 per letter.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "Create your parking appeal letter",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=parking_direct#/tool/parking"
+  },
+  {
+    "id": "three-step-static",
+    "format": "static",
+    "assets": [
+      "../campaign-2026-07/exports/appealmate-steps-portrait-1080x1350.png"
+    ],
+    "channels": [
+      "instagram",
+      "facebook"
+    ],
+    "caption": "Skip the blank page. Add the details, choose the reason that fits, then download a formal PDF to review and send. Every live AppealMate tool is currently £1.99 per letter.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "Your letter in three clear steps",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=three_steps"
+  },
+  {
+    "id": "nine-tools-static",
+    "format": "static",
+    "assets": [
+      "../campaign-2026-07/exports/appealmate-nine-tools-square-1080.png"
+    ],
+    "channels": [
+      "instagram",
+      "facebook"
+    ],
+    "caption": "Parking tickets, rejected appeals, deposit disputes, travel delays, parcels, council tax, energy bills, holiday complaints and money claims. Start a formal UK self-help letter for £1.99.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "Nine everyday problems. One clear place to start.",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=nine_tools"
+  },
+  {
+    "id": "parking-story",
+    "format": "story",
+    "assets": [
+      "../campaign-2026-07/exports/appealmate-parking-story-1080x1920.png"
+    ],
+    "channels": [
+      "instagram",
+      "facebook"
+    ],
+    "caption": "Got a parking charge to challenge? Build a formal letter in around two minutes, review it, then send it yourself. £1.99 per letter.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "A clear place to start",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=parking_story#/tool/parking"
+  },
+  {
+    "id": "parking-product-reel",
+    "format": "reel",
+    "assets": [
+      "../campaign-2026-07/exports/appealmate-parking-reel-12s.mp4"
+    ],
+    "channels": [
+      "instagram",
+      "facebook",
+      "tiktok"
+    ],
+    "caption": "From the details to a formal parking appeal letter in a few guided steps. Review the PDF before you send it. £1.99 per letter.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "Build the letter, then review it",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=parking_reel#/tool/parking"
+  },
+  {
+    "id": "nine-tools-reel",
+    "format": "reel",
+    "assets": [
+      "../campaign-2026-07/exports/appealmate-nine-tools-reel-12s.mp4"
+    ],
+    "channels": [
+      "instagram",
+      "facebook",
+      "tiktok"
+    ],
+    "caption": "One guided starting point for nine everyday UK problems. Choose the tool, answer the questions, and download a formal letter to review. £1.99 per letter.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "Explore all nine AppealMate tools",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=nine_tools_reel"
+  },
+  {
+    "id": "photo-relief-feed",
+    "format": "static",
+    "assets": [
+      "../campaign-2026-07/exports-alt/appealmate-photo-feed-1080x1350.png"
+    ],
+    "channels": [
+      "instagram",
+      "facebook"
+    ],
+    "caption": "A parking ticket can leave you staring at a blank page. AppealMate guides you through the details and creates a formal PDF letter for you to review and send. £1.99 per letter.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "Turn the details into a clear letter",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=photo_relief#/tool/parking"
+  },
+  {
+    "id": "photo-relief-story",
+    "format": "story",
+    "assets": [
+      "../campaign-2026-07/exports-alt/appealmate-photo-story-1080x1920.png"
+    ],
+    "channels": [
+      "instagram",
+      "facebook"
+    ],
+    "caption": "Start with the facts. Finish with a formal letter ready to review. AppealMate parking letters are £1.99.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "Less blank-page stress",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=photo_story#/tool/parking"
+  },
+  {
+    "id": "editorial-paper-trail",
+    "format": "static",
+    "assets": [
+      "../campaign-2026-07/exports-alt/appealmate-editorial-square-1080.png"
+    ],
+    "channels": [
+      "instagram",
+      "facebook"
+    ],
+    "caption": "Keep the paper trail clear. AppealMate turns your answers into a structured letter that you can review, download and send yourself. £1.99 per letter.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "Make the paper trail easier",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=paper_trail"
+  },
+  {
+    "id": "tap-through-carousel",
+    "format": "carousel",
+    "assets": [
+      "../campaign-2026-07/exports-alt/appealmate-carousel-01-hook-1080.png",
+      "../campaign-2026-07/exports-alt/appealmate-carousel-02-tap-1080.png",
+      "../campaign-2026-07/exports-alt/appealmate-carousel-03-result-1080.png"
+    ],
+    "channels": [
+      "instagram",
+      "facebook"
+    ],
+    "caption": "Swipe through the simple flow: start with the problem, choose the option that fits, then review the formal PDF before sending it. £1.99 per letter.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "Tap through the AppealMate flow",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=tap_carousel"
+  },
+  {
+    "id": "tap-through-reel",
+    "format": "reel",
+    "assets": [
+      "../campaign-2026-07/exports-alt/appealmate-tap-through-reel-10s.mp4"
+    ],
+    "channels": [
+      "instagram",
+      "facebook",
+      "tiktok"
+    ],
+    "caption": "Choose the route that fits your situation, add the details, and create a formal letter to review. AppealMate letters are £1.99.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "A guided route from problem to letter",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=tap_reel"
+  },
+  {
+    "id": "photo-kinetic-reel",
+    "format": "reel",
+    "assets": [
+      "../campaign-2026-07/exports-alt/appealmate-photo-kinetic-reel-10s.mp4"
+    ],
+    "channels": [
+      "instagram",
+      "facebook",
+      "tiktok"
+    ],
+    "caption": "When the paperwork feels like the hardest part, start with a guided form. AppealMate creates a formal PDF letter for you to check and send. £1.99 per letter.\n\nSelf-help document service. Not legal advice. Outcomes are not guaranteed.",
+    "headline": "Start the letter in a few guided steps",
+    "destination": "https://appealmate.uk/?utm_source=social&utm_medium=organic&utm_campaign=always_on_2026&utm_content=photo_kinetic"
+  }
+]

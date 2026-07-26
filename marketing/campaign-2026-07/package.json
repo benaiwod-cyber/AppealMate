@@ -1,0 +1,20 @@
+{
+  "name": "appealmate-campaign-2026-07",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.496",
+    "@remotion/google-fonts": "4.0.496",
+    "@remotion/media": "4.0.496",
+    "@types/node": "26.1.1",
+    "@types/react": "19.2.17",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "4.0.496",
+    "typescript": "5.9.3"
+  }
+}
